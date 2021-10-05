@@ -7,3 +7,7 @@ GLEW - jednostavni način koristrenja OpenGla
 ## 
 
 VAO,VBO? 
+
+mi gledamo u smjeru -z ,
+gore y,
+naprijed x
