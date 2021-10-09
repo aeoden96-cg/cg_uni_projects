@@ -39,6 +39,9 @@ public:
     IVector& copy() override;
     IVector& newInstance(int sa) override;
 
-    Vector& parseSimple(std::string  s);
+    static Vector& parseSimple(std::string  s);
+
+    IVector& operator+(const IVector&) override;
+  
 
 };

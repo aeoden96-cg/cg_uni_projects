@@ -27,8 +27,8 @@ int Vector::getDimension(){
 }
 IVector& Vector::copy(){
 
-	Vector v = Vector(elements);
-	return v;
+	Vector* x = new Vector(elements);
+	return *x;
 }
 IVector& Vector::newInstance(int){
 	Vector v = Vector(elements);
@@ -45,7 +45,18 @@ Vector& Vector::parseSimple(std::string s){
 			ss.ignore();
 	}
 	
-	Vector v = Vector(&vect[0]);
+	Vector* v = new Vector(&vect[0]);
 
-	return v;
+	return *v;
+}
+
+IVector& Vector::operator+(const IVector& v)
+{
+	
+	for (int i = 0; i < this->dimension; i++) {
+
+		this->elements[i] += ((Vector&)v).elements[i];
+	}
+
+	return *this;
 }

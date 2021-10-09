@@ -1,5 +1,5 @@
 // Kompajliranje:
-// g++ -o SimpleAnimIdle SimpleAnimIdle.cpp util.cpp -lGLEW -lGL -lGLU -lglut -lpthread
+// g++ -o SimpleAnim SimpleAnim.cpp util.cpp -lGLEW -lGL -lGLU -lglut -lpthread
 
 #ifdef _WIN32
 #include <windows.h>             //bit ce ukljuceno ako se koriste windows
@@ -36,7 +36,7 @@
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
 #include "util.hpp"
-#include "SimpleAnimIdle.hpp"
+#include "main.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -49,12 +49,12 @@ GLuint sub_width = 500, sub_height = 500;
 //	Function Prototypes.
 //*********************************************************************************
 
+
 GLuint vertexArrayID;
 GLuint programID;
 GLuint MVPMatrixID;
-GLuint ColorID;
 
-glm::mat4 projection;
+glm::mat4 projection; 
 
 int RunMode = 1;		// Used as a boolean (1 or 0) for "on" and "off"
 
@@ -66,7 +66,7 @@ float AnimateStep = 1.0f;			// Rotation step per update
 const double Xmin = 0.0, Xmax = 3.0;
 const double Ymin = 0.0, Ymax = 3.0;
 
-bool init_data();
+bool init_data(); // nasa funkcija za inicijalizaciju podataka
 
 // glutKeyboardFunc is called below to set this function to handle
 //		all "normal" key presses.
@@ -76,16 +76,13 @@ void myKeyboardFunc( unsigned char key, int x, int y )
 	case 'r':
 		RunMode = 1-RunMode;		// Toggle to opposite value
 		if ( RunMode==1 ) {
-			 glutIdleFunc(drawIdle);
-		}
-		else {
-			 glutIdleFunc(NULL);
+			glutPostRedisplay();
 		}
 		break;
 	case 's':
-		drawIdle();
+		RunMode = 1;
+		myDisplay();
 		RunMode = 0;
-		glutIdleFunc(NULL);
 		break;
 	case 27:	// Escape key
 		exit(1);
@@ -111,15 +108,6 @@ void mySpecialKeyFunc( int key, int x, int y )
 	}
 }
 
-void drawIdle(void)
-{
-	CurrentAngle += AnimateStep;
-        if ( CurrentAngle > 360.0 ) {
-             CurrentAngle -= 360.0*floor(CurrentAngle/360.0);    // Don't allow overflow
-                }
-	glutPostRedisplay();
-}
-
 //*********************************************************************************
 //	Glavni program.
 //*********************************************************************************
@@ -142,7 +130,6 @@ int main(int argc, char ** argv)
 
 	window = glutCreateWindow("SimpleAnim" );
 	glutReshapeFunc(resizeWindow);
-	glutIdleFunc(drawIdle);   // Call this for background processing
 	glutDisplayFunc(myDisplay);
 	glutKeyboardFunc( myKeyboardFunc );			// Handles "normal" ascii symbols
 	glutSpecialFunc( mySpecialKeyFunc );		// Handles "special" keyboard keys
@@ -166,6 +153,13 @@ int main(int argc, char ** argv)
 bool init_data()
 {
 	glClearColor( 1.0f, 1.0f, 1.0f, 1.0f );
+
+	// Antialijasiranje poligona, ovisno o implementaciji
+	
+	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glHint(GL_POLYGON_SMOOTH, GL_DONT_CARE);
 	
 	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
 	glGenVertexArrays(1, &vertexArrayID);
@@ -196,15 +190,15 @@ bool init_data()
 
 	// An array of 9 rgbs which represents colors for 9 vertices
 	static const GLfloat g_color_buffer_data[] = {
-	   1.0f, 0.0f, 0.0f,  // red
-	   1.0f, 0.0f, 0.0f,  // red
-	   1.0f, 0.0f, 0.0f,  // red
-	   0.0f, 1.0f, 0.0f,  // green
-	   0.0f, 1.0f, 0.0f,  // green
-	   0.0f, 1.0f, 0.0f,  // green
-	   0.0f, 0.0f, 1.0f,  // blue
-	   0.0f, 0.0f, 1.0f,  // blue
-	   0.0f, 0.0f, 1.0f,  // blue
+	   1.0f, 0.0f, 0.0f, 1.0f,  // red
+	   1.0f, 0.0f, 0.0f, 1.0f,  // red
+	   1.0f, 0.0f, 0.0f, 1.0f,  // red
+	   0.0f, 1.0f, 0.0f, 1.0f,  // green
+	   0.0f, 1.0f, 0.0f, 1.0f,  // green
+	   0.0f, 1.0f, 0.0f, 1.0f,  // green
+	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
+	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
+	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
 	}; 
 
 	// This will identify our color buffer
@@ -231,7 +225,7 @@ bool init_data()
 	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glVertexAttribPointer(
 	   1,                  // attribute 1.
-	   3,                  // size
+	   4,                  // size
 	   GL_FLOAT,           // type
 	   GL_FALSE,           // normalized?
 	   0,                  // stride
@@ -261,6 +255,14 @@ void myDisplay()
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
  	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
+	if (RunMode==1) {
+		// Calculate animation parameters
+        CurrentAngle += AnimateStep;
+		if ( CurrentAngle > 360.0 ) {
+			CurrentAngle -= 360.0*floor(CurrentAngle/360.0);	// Don't allow overflow
+		}
+	}
+  
  	// Model matrix : 
  	glm::mat4 model = glm::mat4(1.0f);
  	model = glm::translate (model,glm::vec3(1.5f, 1.5f, 0.0f));
@@ -284,12 +286,15 @@ void myDisplay()
 	// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
 	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
 
-	// Zatraži crtanje toka vrhova pri čemu ih se interpretira kao trokute
 	glDrawArrays(GL_TRIANGLES, 0, 9); // Starting from vertex 0; 9 vertices total -> 3 triangles
 
 	// onemogući slanje atributa nula i jedan shaderu
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
+	
+	if ( RunMode==1 ) {
+		glutPostRedisplay();	// Trigger an automatic redraw for animation
+	}
 
 	glutSwapBuffers();
 }
