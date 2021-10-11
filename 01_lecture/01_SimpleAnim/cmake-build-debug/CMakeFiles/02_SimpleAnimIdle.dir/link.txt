@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/02_SimpleAnimIdle.dir/src/main.cpp.o CMakeFiles/02_SimpleAnimIdle.dir/src/util.cpp.o -o 02_SimpleAnimIdle  /usr/lib/libOpenGL.so /usr/lib/libGLX.so /usr/lib/libGLU.so /usr/lib/libglut.so /usr/lib/libXmu.so /usr/lib/libXi.so /usr/lib/libGLEW.so -lpthread -lm 

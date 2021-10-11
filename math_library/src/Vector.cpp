@@ -1,8 +1,8 @@
 #include "Vector.h"
 #include <vector>
 #include <sstream>
-#include< fstream >
-#include<istream>
+#include <fstream>
+#include <istream>
 #include <iostream>
 
 using namespace std;

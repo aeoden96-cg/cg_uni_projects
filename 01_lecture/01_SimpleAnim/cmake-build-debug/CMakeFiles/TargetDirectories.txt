@@ -1,0 +1,3 @@
+/home/mateo/Desktop/projects/cg/01_lecture/01_SimpleAnim/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/mateo/Desktop/projects/cg/01_lecture/01_SimpleAnim/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/mateo/Desktop/projects/cg/01_lecture/01_SimpleAnim/cmake-build-debug/CMakeFiles/02_SimpleAnimIdle.dir

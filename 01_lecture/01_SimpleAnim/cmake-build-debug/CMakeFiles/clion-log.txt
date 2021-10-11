@@ -1,0 +1,19 @@
+/bin/cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_DEPENDS_USE_COMPILER=FALSE -G "CodeBlocks - Unix Makefiles" /home/mateo/Desktop/projects/cg/01_lecture/01_SimpleAnim
+-- The C compiler identification is GNU 11.1.0
+-- The CXX compiler identification is GNU 11.1.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/cc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/c++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Found OpenGL: /usr/lib/libOpenGL.so   
+-- Found GLUT: /usr/lib/libglut.so  
+-- Found GLEW: /usr/include (found version "2.2.0") 
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/mateo/Desktop/projects/cg/01_lecture/01_SimpleAnim/cmake-build-debug
