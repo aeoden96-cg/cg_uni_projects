@@ -5,6 +5,7 @@ Debug/
 .idea/
 .directory
 cmake-build-debug/
+ext/
 
 
 # Prerequisites
