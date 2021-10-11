@@ -5,10 +5,9 @@
 #include <windows.h>             //bit ce ukljuceno ako se koriste windows
 #endif
 
-#include <math.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
+#include <cmath>
+#include <cstring>
+#include <cstdlib>
 #include <iostream>
 
 #include <GL/glew.h>
@@ -42,7 +41,7 @@
 //	Pokazivac na glavni prozor i pocetna velicina.
 //*********************************************************************************
 
-GLuint window; 
+GLuint window;
 GLuint sub_width = 500, sub_height = 500; 
 
 //*********************************************************************************
@@ -52,7 +51,7 @@ GLuint sub_width = 500, sub_height = 500;
 GLuint vertexArrayID;
 GLuint programID;
 GLuint MVPMatrixID;
-GLuint ColorID;
+//GLuint ColorID;
 
 glm::mat4 projection;
 

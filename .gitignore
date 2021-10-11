@@ -2,6 +2,8 @@ build/
 Release/
 Debug/
 .vs/
+.idea/
+.directory
 
 # Prerequisites
 *.d
