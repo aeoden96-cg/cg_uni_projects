@@ -167,15 +167,13 @@ bool init_data()
 
 	// An array of 9 vectors which represents 9 vertices
 	static const GLfloat g_vertex_buffer_data[] = {
-		0.3, 1.0, 0.5,
-		2.7, 0.85, 0.0,
-		2.7, 1.15, 0.0,
-		2.53, 0.71, 0.5,
-		1.46, 2.86, 0.0,
-		1.2, 2.71, 0.0,
-		1.667, 2.79, 0.5,
-		0.337, 0.786, 0.0,
-		0.597, 0.636, 0.0,
+		0,1,0,
+        0.9, -1, 0.0,
+		-1, 0.4, 0.0,
+		1, 0.4, 0.0,
+        -0.9, -1, 0.0,
+
+
 	};
 
 	// This will identify our vertex buffer
@@ -191,13 +189,11 @@ bool init_data()
 	static const GLfloat g_color_buffer_data[] = {
 	   1.0f, 0.0f, 0.0f, 1.0f,  // red
 	   1.0f, 0.0f, 0.0f, 1.0f,  // red
-	   1.0f, 0.0f, 0.0f, 1.0f,  // red
-	   0.0f, 1.0f, 0.0f, 1.0f,  // green
-	   0.0f, 1.0f, 0.0f, 1.0f,  // green
-	   0.0f, 1.0f, 0.0f, 1.0f,  // green
-	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
-	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
-	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
+	   1.0f, 0.0f, 0.0f, 1.0f,  // red,
+       1.0f, 0.0f, 0.0f, 1.0f,  // red
+       1.0f, 0.0f, 0.0f, 1.0f,  // red
+       1.0f, 0.0f, 0.0f, 1.0f,  // red
+
 	}; 
 
 	// This will identify our color buffer
@@ -233,7 +229,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader");
+	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
@@ -261,39 +257,15 @@ void myDisplay()
 			CurrentAngle -= 360.0*floor(CurrentAngle/360.0);	// Don't allow overflow
 		}
 	}
-  
- 	// Model matrix : 
- 	glm::mat4 model = glm::mat4(1.0f);
 
- 	model = glm::translate (model,glm::vec3(1.5f, 1.5f, 0.0f));
-
- 	model = glm::rotate (model,
-                          (float) (CurrentAngle*M_PI/180.0),
-                          glm::vec3(0.0f, 0.0f, 1.0f));
-
- 	model = glm::translate (model,glm::vec3(-1.5f, -1.5f, 0.0f));
-
- 	// Our ModelViewProjection : multiplication of our 2 matrices
- 	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
-	
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
 	glBindVertexArray(vertexArrayID);
-
-	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);
-	// omogući slanje atributa jedan shaderu - pod indeks 1 u init smo povezali boje vrhova (x,y,z)
 	glEnableVertexAttribArray(1);
 
-	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
 	glUseProgram(programID);
 
-	// Send our transformation to the currently bound shader, in the "MVP" uniform
-	// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
-	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+    glDrawArrays(GL_LINE_LOOP,0,5);
 
-	glDrawArrays(GL_TRIANGLES, 0, 9); // Starting from vertex 0; 9 vertices total -> 3 triangles
-
-	// onemogući slanje atributa nula i jedan shaderu
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
 	

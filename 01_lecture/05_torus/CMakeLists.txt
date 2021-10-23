@@ -1,3 +1,20 @@
+#Radi makefile za bilokoji OpenGL projekt s strukturom:
+
+#src/       file.cpp
+#           file2.cpp
+#           shader.geoshader
+#           shader2.fragshader
+#build/
+#OVAJ_FILE
+
+################
+#Upute:
+#cd build/
+#cmake ..
+#cmake --build .
+################
+
+
 cmake_minimum_required(VERSION 3.21)
 project(proj)
 set(CMAKE_CXX_STANDARD 14)
@@ -27,5 +44,5 @@ file(COPY ${MY_SHADERS} DESTINATION .)
 #        src/util_t.hpp)
 #configure_file(src/SimpleFragmentShader.fragmentshader SimpleFragmentShader.fragmentshader COPYONLY)
 #configure_file(src/SimpleVertexShader.vertexshader SimpleVertexShader.vertexshader COPYONLY)
-#configure_file(src/TessCont.tesscontshader TessCont.tesscontshader COPYONLY)
-#configure_file(src/TessEval.tessevalshader TessEval.tessevalshader COPYONLY)
+#configure_file(src/TessCont.tesc TessCont.tesc COPYONLY)
+#configure_file(src/TessEval.tese TessEval.tese COPYONLY)

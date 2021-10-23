@@ -157,14 +157,20 @@ bool init_data()
 	GLuint VertexShaderID;
 	GLuint FragmentShaderID;
 
-	programID = loadShaders("SimpleVertexShader.vertexshader", "SimpleFragmentShader.fragmentshader", "SimpleGeometryShader.geometryshader", &VertexShaderID, &FragmentShaderID);
+	programID = loadShaders("SimpleVertexShader.vert",
+                            "SimpleFragmentShader.frag",
+                            "SimpleGeometryShader.geom",
+                            &VertexShaderID,
+                            &FragmentShaderID);
 	
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
 	}
 	
-	program_geometryID = loadShaders_g("GeometryShader.geometryshader", VertexShaderID, FragmentShaderID); 
+	program_geometryID = loadShaders_g("GeometryShader.geom",
+                                       VertexShaderID,
+                                       FragmentShaderID);
 	if(program_geometryID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

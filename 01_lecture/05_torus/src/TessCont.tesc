@@ -18,6 +18,7 @@ void main( )
 	gl_TessLevelOuter[1] = tcuDetail;
 	gl_TessLevelOuter[2] = tcvDetail;
 	gl_TessLevelOuter[3] = tcuDetail;
+
 	gl_TessLevelInner[0]  = tcuDetail;
 	gl_TessLevelInner[1]  = tcvDetail;
 }
