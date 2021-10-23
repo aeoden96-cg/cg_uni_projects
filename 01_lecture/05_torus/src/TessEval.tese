@@ -19,7 +19,10 @@ void main( )
 	float theta = 2. * PI * v;
 	
 	float costheta = cos(theta);
-	vec3 xyz = vec3( cos(phi)*(tcvRadius*costheta+tcuRadius), sin(phi)*(tcvRadius*costheta+tcuRadius), tcvRadius*sin(theta) );
+	vec3 xyz = vec3(
+		cos(phi)*(tcvRadius*costheta+tcuRadius),
+		sin(phi)*(tcvRadius*costheta+tcuRadius),
+		tcvRadius*sin(theta) );
 	
 	gl_Position = MVP * vec4( xyz,1. );
 }

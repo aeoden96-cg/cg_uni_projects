@@ -22,6 +22,7 @@ void main( )
 	gl_TessLevelOuter[1] = uScale * tcRadius * uDetail;
 	gl_TessLevelOuter[2] = 2.;
 	gl_TessLevelOuter[3] = uScale * tcRadius * uDetail;
+
 	gl_TessLevelInner[0]  = uScale * tcRadius * uDetail;
 	gl_TessLevelInner[1]  = uScale * tcRadius * uDetail;
 }

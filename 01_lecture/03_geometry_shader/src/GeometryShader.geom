@@ -22,12 +22,12 @@ vec4 tri_centroid = (gl_in[0].gl_Position +
                      gl_in[2].gl_Position) / 3.0;
 
 void main(){
-gl_Position = MVP * tri_centroid; 
-fragmentColor = vec3(1.0,0.0,0.0);
-EmitVertex();
+    gl_Position = MVP * tri_centroid;
+    fragmentColor = vec3(1.0,0.0,0.0);
+    EmitVertex();
 
-gl_Position = MVP * (tri_centroid + vec4(face_normal * normal_length,0.0)); 
-fragmentColor = vec3(1.0,0.0,0.0);
-EmitVertex();
-EndPrimitive();
+    gl_Position = MVP * (tri_centroid + vec4(face_normal * normal_length,0.0));
+    fragmentColor = vec3(1.0,0.0,0.0);
+    EmitVertex();
+    EndPrimitive();
 }
