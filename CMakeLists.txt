@@ -15,13 +15,11 @@ MACRO(PROJECT_INIT)
     include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
     target_link_libraries(${project_name} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARIES} -lpthread -lm)
 
-    file(GLOB MY_SHADERS "*.tesc" "*.tese" "*.vert" "*.frag" "*.geom")
 
-    file(COPY ${MY_SHADERS} DESTINATION .)
-#    message(${CMAKE_CURRENT_BINARY_DIR})
-#    foreach(shader ${MY_SHADERS})
-#        configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-#    endforeach()
+    file(GLOB MY_SHADERS "*.tesc" "*.tese" "*.vert" "*.frag" "*.geom")
+    foreach(shader ${MY_SHADERS})
+        configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+    endforeach()
 
 ENDMACRO()
 

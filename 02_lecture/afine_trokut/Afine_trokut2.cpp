@@ -1,14 +1,15 @@
 // Kompajliranje:
-// g++ -o threepoints threepoints.cpp util.cpp -lGLEW -lGL -lGLU -lglut -lpthread
+// g++ -o Afine_trokut2 Afine_trokut2.cpp util.cpp -lGLEW -lGL -lGLU -lglut -lpthread
 
 #ifdef _WIN32
 #include <windows.h>             //bit ce ukljuceno ako se koriste windows
 #endif
 
-//#include <stdio.h>
-//#include <string.h>
-//#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include <iostream>
+#include <stack> 
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -41,7 +42,7 @@
 //*********************************************************************************
 
 GLuint window; 
-GLuint sub_width = 256, sub_height = 256;
+GLuint sub_width = 500, sub_height = 500;
 
 //*********************************************************************************
 //	Function Prototypes.
@@ -49,6 +50,8 @@ GLuint sub_width = 256, sub_height = 256;
 
 void myDisplay		();
 void myReshape		(int width, int height);
+static void mySpecialKeyFunc( int Key, int x, int y );
+bool init_data(); // nasa funkcija za inicijalizaciju podataka
 
 GLuint vertexArrayID;
 GLuint programID;
@@ -56,9 +59,42 @@ GLuint MVPMatrixID;
 GLuint ColorID;
 
 GLuint vertexbuffer_letter,vertexbuffer2;
-static const GLfloat color1[]={1.0f, 0.0f, 0.0f}, color2[]={1.0f, 1.0f, 1.0f};
+static const GLfloat color1[]={1.0f, 1.0f, 0.0f, 1.0f}, color2[]={1.0f, 1.0f, 1.0f, 1.0f};
+glm::mat4 model = glm::mat4(1.0f);
+std::stack<glm::mat4> mvstack;
+GLint broj=0;
 
-bool init_data(); // nasa funkcija za inicijalizaciju podataka
+static void Key_up(void)
+{
+	++broj;
+	mvstack.push(model);
+	model = glm::translate (model,glm::vec3(0.3f, 1.0f, 0.0f));
+	model = glm::rotate (model,glm::radians(-5.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	glutPostRedisplay(); 
+}
+
+static void Key_down(void)
+{
+	if (broj>0) {
+		--broj;	
+		model = mvstack.top();
+		mvstack.pop();    
+		glutPostRedisplay();}	
+
+}
+
+static void mySpecialKeyFunc( int Key, int x, int y )
+{
+	switch ( Key ) {
+	case GLUT_KEY_UP:		
+		Key_up();
+		break;
+	case GLUT_KEY_DOWN:
+		Key_down();
+		break;
+	}
+}
+
 
 //*********************************************************************************
 //	Glavni program.
@@ -83,6 +119,7 @@ int main(int argc, char ** argv)
 	window = glutCreateWindow("Glut OpenGL Prozor");
 	glutReshapeFunc(myReshape);
 	glutDisplayFunc(myDisplay);
+	glutSpecialFunc( mySpecialKeyFunc );
 
 	glewExperimental = GL_TRUE;
 	glewInit();
@@ -99,8 +136,16 @@ int main(int argc, char ** argv)
 
 bool init_data()
 {
-	glPointSize(6);
-	glLineWidth(4);
+	glEnable( GL_DEPTH_TEST );
+	glPointSize(8);
+	glLineWidth(1);
+	
+	// Antialijasiranje poligona, ovisno o implementaciji
+	
+	glEnable(GL_POLYGON_SMOOTH);
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glHint(GL_POLYGON_SMOOTH, GL_DONT_CARE);
 	
 	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
 	glGenVertexArrays(1, &vertexArrayID);
@@ -109,12 +154,12 @@ bool init_data()
 
 	// An array of 3 vectors which represents 3 vertices
 	static const GLfloat triangle[] = {
-	   1.0f, -1.0f, 0.0f,
-	   0.0f, 1.0f, 0.0f,
-	   -1.0f,  -1.0f, 0.0f,
+	   1.0f, -1.0f, 1.0f,
+	   0.0f, 1.0f, 1.0f,
+	   -1.0f,  -1.0f, 1.0f,
 	};
 	
-	// Točke koje definiraju koordinatni sustav
+	// Točke koje definiraju koordinatne osi
 	static const GLfloat coord[] = {
 	   -5.0f, 0.0f, 0.0f,
 	   5.0f, 0.0f, 0.0f,
@@ -164,21 +209,16 @@ void myDisplay()
  	glm::mat4 projection = glm::ortho(-5.0f,5.0f,-5.0f,5.0f,-1.0f,1.0f); // In world coordinates
   
  	// Model matrix : an identity matrix (model will be at the origin)
- 	glm::mat4 model = glm::mat4(1.0f);
- 	// Our ModelViewProjection : multiplication of our 2 matrices
- 	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
+ 	glm::mat4 model1 = glm::mat4(1.0f);
 
 	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
 	glBindVertexArray(vertexArrayID);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);
-
+	
 	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
 	glUseProgram(programID);
-
-	// Send our transformation to the currently bound shader, in the "MVP" uniform
-	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
 	
 	// Crtanje koordinatnih osi
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
@@ -190,10 +230,12 @@ void myDisplay()
 	   0,                  // stride
 	   (void*)0            // array buffer offset
 	); 
-	glUniform3fv(ColorID,1,color2);
+	glm::mat4 mvp = projection * model1;
+	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	glUniform4fv(ColorID,1,color2);
 	glDrawArrays(GL_LINES, 0, 4); 
 	
-	// Crtanje originalnog trokuta
+	// Crtanje trokuta
 	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_letter);
 	glVertexAttribPointer(
 	   0,                  // attribute 0.
@@ -203,15 +245,11 @@ void myDisplay()
 	   0,                  // stride
 	   (void*)0            // array buffer offset
 	);
-	glUniform3fv(ColorID,1,color1);
-	glDrawArrays(GL_LINE_LOOP, 0, 3);
 	
-	// Crtanje transformiranog trokuta
-	model = glm::translate (model,glm::vec3(1.0f, 3.0f, 0.0f));
-	model = glm::rotate (model, glm::radians(-90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 	mvp = projection * model;
 	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
-	glDrawArrays(GL_LINE_LOOP, 0, 3);
+	glUniform4fv(ColorID,1,color1);
+	glDrawArrays(GL_TRIANGLES, 0, 3);
 
 	// onemogući slanje atributa nula shaderu
 	glDisableVertexAttribArray(0);
@@ -225,7 +263,7 @@ void myDisplay()
 
 void myReshape(int width, int height)
 {
-	sub_width = width;                   // zapamti novu sirinu prozora
+	sub_width = width;                  // zapamti novu sirinu prozora
     sub_height = height;				// zapamti novu visinu prozora
     glViewport( 0, 0, sub_width, sub_height );
 }
