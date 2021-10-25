@@ -278,7 +278,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vertexshader", "FragmentShader.fragmentshader", "TessCont.tesscontshader", "TessEval.tessevalshader");
+	programID = loadShaders("SimpleVertexShader.vert", "FragmentShader.fragmentshader", "TessCont.tesscontshader", "TessEval.tessevalshader");
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
