@@ -53,7 +53,7 @@ void myReshape		(int width, int height);
 void myMouse		(int button, int state, int x, int y);
 void myKeyboard		(unsigned char theKey, int mouseX, int mouseY);
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID, program_geometryID;
 GLuint MVPMatrixID, MVMatrixID, NMatrixID, ColorID, MVPMatrix_geometryID, MVMatrix_geometryID, PMatrix_geometryID, Normallength_geometryID;
 
@@ -107,10 +107,10 @@ int main(int argc, char ** argv)
 
 bool init_data()
 {
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 4 vectors which represents 4 vertices
 	static const GLfloat g_vertex_buffer_data[] = {
@@ -215,8 +215,8 @@ void myDisplay()
  	glm::mat4 mvp = projection * view * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
  	glm::mat4 mv = view * model; // ModelView matrica
 
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
-	glBindVertexArray(vertexArrayID);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
+	glBindVertexArray(VAO);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);

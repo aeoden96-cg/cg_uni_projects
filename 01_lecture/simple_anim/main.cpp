@@ -50,7 +50,7 @@ GLuint sub_width = 500, sub_height = 500;
 //*********************************************************************************
 
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID;
 GLuint MVPMatrixID;
 
@@ -160,10 +160,10 @@ bool init_data()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glHint(GL_POLYGON_SMOOTH, GL_DONT_CARE);
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 9 vectors which represents 9 vertices
 	static const GLfloat g_vertex_buffer_data[] = {
@@ -179,11 +179,11 @@ bool init_data()
 	};
 
 	// This will identify our vertex buffer
-	GLuint vertexbuffer;
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer
-	glGenBuffers(1, &vertexbuffer);
-	// The following commands will talk about our 'vertexbuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
+	GLuint VBO;
+	// Generate 1 buffer, put the resulting identifier in VBO
+	glGenBuffers(1, &VBO);
+	// The following commands will talk about our 'VBO' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_vertex_buffer_data), g_vertex_buffer_data, GL_STATIC_DRAW);
 
@@ -198,30 +198,29 @@ bool init_data()
 	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
 	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
 	   0.0f, 0.0f, 1.0f, 1.0f,  // blue
-	}; 
+	};
 
-	// This will identify our color buffer
-	GLuint colorbuffer;
-	// Generate 1 buffer, put the resulting identifier in colorbuffer
-	glGenBuffers(1, &colorbuffer);
-	// The following commands will talk about our 'colorbuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
+    // Podesi da se 0. atribut dohvaca iz vertex spremnika
+    glVertexAttribPointer(
+            0,                  // attribute 0.
+            3,                  // size
+            GL_FLOAT,           // type
+            GL_FALSE,           // normalized?
+            0,                  // stride
+            (void*)0            // array buffer offset
+    );
+
+    // This will identify our color buffer
+	GLuint VBO_color;
+	// Generate 1 buffer, put the resulting identifier in VBO_color
+	glGenBuffers(1, &VBO_color);
+	// The following commands will talk about our 'VBO_color' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_color);
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW); 
 
-	// Podesi da se 0. atribut dohvaca iz vertex spremnika
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	glVertexAttribPointer(
-	   0,                  // attribute 0.
-	   3,                  // size
-	   GL_FLOAT,           // type
-	   GL_FALSE,           // normalized?
-	   0,                  // stride
-	   (void*)0            // array buffer offset
-	); 
 
 	// Podesi da se 1. atribut dohvaca iz color spremnika
-	glBindBuffer(GL_ARRAY_BUFFER, colorbuffer);
 	glVertexAttribPointer(
 	   1,                  // attribute 1.
 	   4,                  // size
@@ -276,8 +275,8 @@ void myDisplay()
  	// Our ModelViewProjection : multiplication of our 2 matrices
  	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
 	
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
-	glBindVertexArray(vertexArrayID);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
+	glBindVertexArray(VAO);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);

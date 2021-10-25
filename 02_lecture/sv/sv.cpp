@@ -47,7 +47,7 @@
 GLuint window; 
 GLint Width = 1000, Height = 1000; 
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID,programID_t;
 GLuint MVPMatrixID,MVPMatrixID_t;
 GLuint ColorID,ColorID_t;
@@ -171,10 +171,10 @@ bool init_data()
 {
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 12 vectors which represents 12 vertices
 	static const GLfloat patch[]={150.0f, 14.0f, 15.0f, 0.0f, 
@@ -244,8 +244,8 @@ void myDisplay()
  	// Our ModelViewProjection : multiplication of our 2 matrices
  	glm::mat4 mvp = projection * model; 
 	
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
-	glBindVertexArray(vertexArrayID);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
+	glBindVertexArray(VAO);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);

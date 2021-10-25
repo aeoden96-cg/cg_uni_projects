@@ -50,7 +50,7 @@ GLuint sub_width = 500, sub_height = 500;
 //*********************************************************************************
 
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID;
 GLuint MVPMatrixID;
 
@@ -160,10 +160,10 @@ bool init_data()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glHint(GL_POLYGON_SMOOTH, GL_DONT_CARE);
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 9 vectors which represents 9 vertices
 	static const GLfloat g_vertex_buffer_data[] = {
@@ -258,7 +258,7 @@ void myDisplay()
 		}
 	}
 
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
 

@@ -56,14 +56,17 @@ bool init_data(); // nasa funkcija za inicijalizaciju podataka
 float CurrentAngle = 0.0f;			// Angle in degrees
 float AnimateStep = 1.0f;
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID;
 GLuint MVPMatrixID;
 GLuint ColorID;
 
-GLuint vertexbuffer_letter,vertexbuffer2;
+GLuint VBO_letter,vertexbuffer2;
 static const GLfloat color1[]={1.0f, 1.0f, 0.0f, 1.0f}, color2[]={1.0f, 1.0f, 1.0f, 1.0f};
 glm::mat4 model = glm::mat4(1.0f);
+glm::mat4 projection = glm::ortho(-5.0f,5.0f,-5.0f,5.0f,-1.0f,1.0f); // In world coordinates
+
+
 std::stack<glm::mat4> mvstack;
 GLint broj=0;
 
@@ -136,8 +139,8 @@ bool init_data()
 	glLineWidth(1);
 
 	
-	glGenVertexArrays(1, &vertexArrayID);
-	glBindVertexArray(vertexArrayID);
+	glGenVertexArrays(1, &VAO);
+	glBindVertexArray(VAO);
 
 	static const GLfloat letter_coord[] = {
 	   0.0f, 1.0f, 1.0f,
@@ -147,17 +150,25 @@ bool init_data()
 	};
 
 
-    glGenBuffers(1, &vertexbuffer_letter);
-    glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_letter);
+    glGenBuffers(1, &VBO_letter);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO_letter);
 	glBufferData(GL_ARRAY_BUFFER, sizeof(letter_coord), letter_coord, GL_STATIC_DRAW);
 
-	std::cout << "Going to load programs... " << std::endl << std::flush;
+    glVertexAttribPointer(
+            0,                  // attribute 0.
+            3,                  // size
+            GL_FLOAT,           // type
+            GL_FALSE,           // normalized?
+            0,                  // stride
+            (void*)0            // array buffer offset
+    );
+    glEnableVertexAttribArray(0);
 
+	std::cout << "Going to load programs... " << std::endl << std::flush;
 	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
-	if(programID==0) {
-		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
-		return false;
-	}
+	if(programID==0) { std::cout << "Loading shaders error" << std::endl; return false;}
+
+
 
 	// Get a handle for our uniforms for later when drawing...
 	MVPMatrixID = glGetUniformLocation(programID, "MVP");
@@ -168,48 +179,26 @@ bool init_data()
 
 void myDisplay()
 {
+    glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     CurrentAngle =1;
     if ( CurrentAngle > 360.0 ) {
         CurrentAngle -= 360.0*floor(CurrentAngle/360.0);	// Don't allow overflow
     }
 
-	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
- 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glm::vec3 rot_axis= glm::vec3 (0, 1, 0);
+    model = glm::rotate (model, (float) (CurrentAngle*M_PI/180.0), rot_axis);
+        glm::mat4  mvp = projection * model;
 
-
-    glm::vec3 rot= glm::vec3 (0,1,0);
- 	glm::mat4 projection = glm::ortho(-5.0f,5.0f,-5.0f,5.0f,-1.0f,1.0f); // In world coordinates
-
-    model = glm::rotate (model,
-                         (float) (CurrentAngle*M_PI/180.0),
-                         rot);
-
-	glBindVertexArray(vertexArrayID);
-    glEnableVertexAttribArray(0);
+    ////////////////////////// MAIN LOOP
 	glUseProgram(programID);
-	
+    glBindVertexArray(VAO);
 
-
-
-	// Crtanje trokuta
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_letter);
-	glVertexAttribPointer(
-	   0,                  // attribute 0.
-	   3,                  // size
-	   GL_FLOAT,           // type
-	   GL_FALSE,           // normalized?
-	   0,                  // stride
-	   (void*)0            // array buffer offset
-	);
-
-    glm::mat4  mvp = projection * model;
 	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
 	glUniform4fv(ColorID,1,color1);
 	glDrawArrays(GL_LINE_LOOP, 0, 4);
 
-	// onemogući slanje atributa nula shaderu
-	glDisableVertexAttribArray(0);
     glutPostRedisplay();
 	glutSwapBuffers();
 }

@@ -49,7 +49,7 @@ GLuint sub_width = 500, sub_height = 500;
 //	Function Prototypes.
 //*********************************************************************************
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID;
 GLuint MVPMatrixID;
 GLuint ColorID;
@@ -157,10 +157,10 @@ bool init_data()
 {
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 1 vector which represents torus
 	static const GLfloat patch[]={ 2.0f, 25.0f, 0.4f, 10.0f};
@@ -227,8 +227,8 @@ void myDisplay()
  	// Our ModelViewProjection : multiplication of our 2 matrices
  	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
 	
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
-	glBindVertexArray(vertexArrayID);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
+	glBindVertexArray(VAO);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);

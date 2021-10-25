@@ -50,12 +50,12 @@ GLuint sub_width = 256, sub_height = 256;
 void myDisplay		();
 void myReshape		(int width, int height);
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID;
 GLuint MVPMatrixID;
 GLuint ColorID;
 
-GLuint vertexbuffer_letter,vertexbuffer2;
+GLuint VBO_letter,vertexbuffer2;
 static const GLfloat color1[]={1.0f, 0.0f, 0.0f}, color2[]={1.0f, 1.0f, 1.0f};
 
 bool init_data(); // nasa funkcija za inicijalizaciju podataka
@@ -102,10 +102,10 @@ bool init_data()
 	glPointSize(6);
 	glLineWidth(4);
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 3 vectors which represents 3 vertices
 	static const GLfloat triangle[] = {
@@ -122,10 +122,10 @@ bool init_data()
 	   0.0f,  5.0f, 0.0f,
 	};
 
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer_letter
-	glGenBuffers(1, &vertexbuffer_letter);
-	// The following commands will talk about our 'vertexbuffer_letter' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_letter);
+	// Generate 1 buffer, put the resulting identifier in VBO_letter
+	glGenBuffers(1, &VBO_letter);
+	// The following commands will talk about our 'VBO_letter' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_letter);
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
 
@@ -168,8 +168,8 @@ void myDisplay()
  	// Our ModelViewProjection : multiplication of our 2 matrices
  	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
 
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
-	glBindVertexArray(vertexArrayID);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
+	glBindVertexArray(VAO);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);
@@ -194,7 +194,7 @@ void myDisplay()
 	glDrawArrays(GL_LINES, 0, 4); 
 	
 	// Crtanje originalnog trokuta
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_letter);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_letter);
 	glVertexAttribPointer(
 	   0,                  // attribute 0.
 	   3,                  // size

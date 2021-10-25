@@ -46,7 +46,7 @@
 
 GLuint window; 
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID;
 GLuint MVMatrixID,PMatrixID,NMatrixID;
 GLuint AmbientalID,EyeDirectionID,IsLocalID,TwoSidedID; 
@@ -247,10 +247,10 @@ bool init_data()
 	glShadeModel( GL_FLAT );
 	glEnable( GL_DEPTH_TEST );
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 3 vectors which represents 3 spheres
 	static const GLfloat patch[]={ 1.3f, 20.0f, 20.0f, 0.0f,
@@ -420,8 +420,8 @@ void Animate()
  	normModel = glm::rotate (normModel,glm::radians(15.0f), glm::vec3(1.0f, 0.0f, 0.0f));
  	model = model * normModel;
  	
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
-	glBindVertexArray(vertexArrayID);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
+	glBindVertexArray(VAO);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);

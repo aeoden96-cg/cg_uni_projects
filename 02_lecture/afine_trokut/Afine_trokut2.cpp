@@ -53,12 +53,12 @@ void myReshape		(int width, int height);
 static void mySpecialKeyFunc( int Key, int x, int y );
 bool init_data(); // nasa funkcija za inicijalizaciju podataka
 
-GLuint vertexArrayID;
+GLuint VAO;
 GLuint programID;
 GLuint MVPMatrixID;
 GLuint ColorID;
 
-GLuint vertexbuffer_letter,vertexbuffer2;
+GLuint VBO_letter,vertexbuffer2;
 static const GLfloat color1[]={1.0f, 1.0f, 0.0f, 1.0f}, color2[]={1.0f, 1.0f, 1.0f, 1.0f};
 glm::mat4 model = glm::mat4(1.0f);
 std::stack<glm::mat4> mvstack;
@@ -147,10 +147,10 @@ bool init_data()
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glHint(GL_POLYGON_SMOOTH, GL_DONT_CARE);
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
-	glGenVertexArrays(1, &vertexArrayID);
+	// Stvori jedan VAO i njegov identifikator pohrani u VAO
+	glGenVertexArrays(1, &VAO);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(vertexArrayID);
+	glBindVertexArray(VAO);
 
 	// An array of 3 vectors which represents 3 vertices
 	static const GLfloat triangle[] = {
@@ -167,10 +167,10 @@ bool init_data()
 	   0.0f,  5.0f, 0.0f,
 	};
 
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer_letter
-	glGenBuffers(1, &vertexbuffer_letter);
-	// The following commands will talk about our 'vertexbuffer_letter' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_letter);
+	// Generate 1 buffer, put the resulting identifier in VBO_letter
+	glGenBuffers(1, &VBO_letter);
+	// The following commands will talk about our 'VBO_letter' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_letter);
 	// Give our vertices to OpenGL.
 	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
 
@@ -211,8 +211,8 @@ void myDisplay()
  	// Model matrix : an identity matrix (model will be at the origin)
  	glm::mat4 model1 = glm::mat4(1.0f);
 
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
-	glBindVertexArray(vertexArrayID);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
+	glBindVertexArray(VAO);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);
@@ -236,7 +236,7 @@ void myDisplay()
 	glDrawArrays(GL_LINES, 0, 4); 
 	
 	// Crtanje trokuta
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer_letter);
+	glBindBuffer(GL_ARRAY_BUFFER, VBO_letter);
 	glVertexAttribPointer(
 	   0,                  // attribute 0.
 	   3,                  // size
