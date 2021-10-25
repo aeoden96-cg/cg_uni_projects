@@ -1,22 +1,7 @@
-#Radi makefile za bilokoji OpenGL projekt s strukturom:
-
-#src/       file.cpp
-#           file2.cpp
-#           shader.geoshader
-#           shader2.fragshader
-#build/
-#OVAJ_FILE
-
-################
-#Upute:
-#cd build/
-#cmake ..
-#cmake --build .
-################
 
 
 cmake_minimum_required(VERSION 3.21)
-project(proj)
+project(proj_zadatak2)
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(OpenGL)
@@ -27,10 +12,10 @@ include_directories(src)
 
 FILE(GLOB MyCSources src/*.cpp)
 FILE(GLOB MyHSources src/*.hpp)
-ADD_EXECUTABLE(proj ${MyCSources} ${MyHSources})
+ADD_EXECUTABLE(proj_zadatak2 ${MyCSources} ${MyHSources})
 
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_link_libraries(proj ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARIES} -lpthread -lm)
+target_link_libraries(proj_zadatak2 ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARIES} -lpthread -lm)
 
 file(GLOB MY_SHADERS "src/*.*shader" "src/*.frag" "src/*.vert")
 file(COPY ${MY_SHADERS} DESTINATION .)

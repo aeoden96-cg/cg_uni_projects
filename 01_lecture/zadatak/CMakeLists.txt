@@ -1,48 +1,18 @@
-#Radi makefile za bilokoji OpenGL projekt s strukturom:
-
-#src/       file.cpp
-#           file2.cpp
-#           shader.geoshader
-#           shader2.fragshader
-#build/
-#OVAJ_FILE
-
-################
-#Upute:
-#cd build/
-#cmake ..
-#cmake --build .
-################
-
-
 cmake_minimum_required(VERSION 3.21)
-project(proj)
+
+project(${project_name})
 set(CMAKE_CXX_STANDARD 14)
 
 find_package(OpenGL)
 find_package(GLUT)
 find_package(GLEW)
 
-include_directories(src)
-
 FILE(GLOB MyCSources src/*.cpp)
 FILE(GLOB MyHSources src/*.hpp)
-ADD_EXECUTABLE(proj ${MyCSources} ${MyHSources})
+ADD_EXECUTABLE(${project_name} ${MyCSources} ${MyHSources})
 
 include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-target_link_libraries(proj ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARIES} -lpthread -lm)
+target_link_libraries(${project_name} ${OPENGL_LIBRARIES} ${GLUT_LIBRARY} ${GLEW_LIBRARIES} -lpthread -lm)
 
-file(GLOB MY_SHADERS "src/*.*shader")
+file(GLOB MY_SHADERS "src/*.tesc" "src/*.tese" "src/*.vert" "src/*.frag" "src/*.geom")
 file(COPY ${MY_SHADERS} DESTINATION .)
-
-
-
-#add_executable(proj
-#        src/torus.cpp
-#        src/torus.hpp
-#        src/util_t.cpp
-#        src/util_t.hpp)
-#configure_file(src/SimpleFragmentShader.frag SimpleFragmentShader.frag COPYONLY)
-#configure_file(src/SimpleVertexShader.vert SimpleVertexShader.vert COPYONLY)
-#configure_file(src/TessCont.tesc TessCont.tesc COPYONLY)
-#configure_file(src/TessEval.tessevalshader TessEval.tessevalshader COPYONLY)
