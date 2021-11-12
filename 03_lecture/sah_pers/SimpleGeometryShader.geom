@@ -13,9 +13,10 @@ int i;
 for (i=0; i<gl_in.length(); i++)
 {
 	gl_Position = gl_in[i].gl_Position;
-	fragmentColor = geomColor[i]; // svi fragmenti u primitivi ce biti boje geomColor[2]; 
+	//fragmentColor = geomColor[i]; // svi fragmenti u primitivi ce biti boje geomColor[2];
 	EmitVertex();
 }
-EndPrimitive();
+	fragmentColor = geomColor[2];
+	EndPrimitive();
 }
  
