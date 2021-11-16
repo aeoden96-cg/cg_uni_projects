@@ -85,7 +85,6 @@ bool linkShaders(GLuint &programID, GLuint vertexShaderID, GLuint fragmentShader
 
 }
 
-
 GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_path) 
 {
 
@@ -122,5 +121,87 @@ GLuint loadShaders(const char * vertex_file_path, const char * fragment_file_pat
 
 	return !compiled ? 0 : programID;
 }
+//FOR GEOM EXAMPLE
+GLuint loadShaders2(const char * vertex_file_path, const char * fragment_file_path, const char * geometry_file_path, GLuint *vertexShaderIDadr, GLuint *fragmentShaderIDadr)
+{
+    GLuint vertexShaderID;
+    GLuint fragmentShaderID;
+
+    std::cout << "Creating vertex shader... " << std::endl << std::flush;
+    vertexShaderID = glCreateShader(GL_VERTEX_SHADER);
+    std::cout << "Going to read... " << std::endl << std::flush;
+    char * vertexShaderCode = NULL;
+    if(!readFile(&vertexShaderCode, vertex_file_path)) return 0;
+
+    std::cout << "Creating fragment shader... " << std::endl << std::flush;
+    fragmentShaderID = glCreateShader(GL_FRAGMENT_SHADER);
+    std::cout << "Going to read... " << std::endl << std::flush;
+    char * fragmentShaderCode = NULL;
+    if(!readFile(&fragmentShaderCode, fragment_file_path)) {
+        free(vertexShaderCode);
+        return 0;
+    }
+
+    std::cout << "Creating geometry shader... " << std::endl << std::flush;
+    GLuint geometryShaderID = glCreateShader(GL_GEOMETRY_SHADER);
+    std::cout << "Going to read... " << std::endl << std::flush;
+    char * geometryShaderCode = NULL;
+    if(!readFile(&geometryShaderCode, geometry_file_path)) {
+        free(vertexShaderCode);
+        free(fragmentShaderCode);
+        return 0;
+    }
+
+    bool compiled;
+    compiled = compileShader(vertex_file_path, vertexShaderID, vertexShaderCode);
+    compiled = compileShader(fragment_file_path, fragmentShaderID, fragmentShaderCode) && compiled;
+    compiled = compileShader(geometry_file_path, geometryShaderID, geometryShaderCode) && compiled;
+
+    free(vertexShaderCode);
+    free(fragmentShaderCode);
+    free(geometryShaderCode);
+
+    GLuint programID;
+
+    if(compiled) {
+        compiled = linkShaders2(programID, vertexShaderID, fragmentShaderID, geometryShaderID);
+    }
+
+    *vertexShaderIDadr=vertexShaderID;
+    *fragmentShaderIDadr=fragmentShaderID;
 
 
+    return !compiled ? 0 : programID;
+}
+
+
+bool linkShaders2(GLuint &programID, GLuint vertexShaderID, GLuint fragmentShaderID, GLuint geometryShaderID)
+{
+
+    // Link the program
+    std::cout << "Linking program" << std::endl << std::flush;
+
+    programID = glCreateProgram();
+    glAttachShader(programID, vertexShaderID);
+    glAttachShader(programID, fragmentShaderID);
+    glAttachShader(programID, geometryShaderID);
+    glLinkProgram(programID);
+
+    // Check the program
+    GLint result = GL_FALSE;
+    int infoLogLength;
+    glGetProgramiv(programID, GL_LINK_STATUS, &result);
+    glGetProgramiv(programID, GL_INFO_LOG_LENGTH, &infoLogLength);
+    if ( infoLogLength > 0 ){
+        std::vector<char> programErrorMessage(infoLogLength+1);
+        glGetProgramInfoLog(programID, infoLogLength, NULL, &programErrorMessage[0]);
+        std::cout << (char*)(&programErrorMessage[0]) << std::endl;
+    }
+
+    glDetachShader(programID, vertexShaderID);
+    glDetachShader(programID, fragmentShaderID);
+    glDetachShader(programID, geometryShaderID);
+
+    return result==GL_TRUE ? true : false;
+
+}

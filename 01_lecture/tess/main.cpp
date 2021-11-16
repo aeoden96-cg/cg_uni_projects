@@ -35,8 +35,8 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util_t.hpp"
-#include "torus.hpp"
+#include "util/util_t.hpp"
+#include "main.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -163,7 +163,7 @@ bool init_data()
 	glBindVertexArray(VAO);
 
 	// An array of 1 vector which represents torus
-	static const GLfloat patch[]={ 2.0f, 25.0f, 0.4f, 10.0f};
+	static const GLfloat patch[]={ 2.0f, 25.0f, 0.5f, 8.0f};
 
 	// This will identify our vertex buffer
 	GLuint vertexbuffer;
@@ -186,10 +186,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert",
-                            "SimpleFragmentShader.frag",
-                            "TessCont.tesc",
-                            "TessEval.tese");
+	programID = loadShaders("SimpleVertexShader.vert", "frag.frag", "TessCont.tesc", "TessEval.tese");
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

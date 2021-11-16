@@ -1,5 +1,5 @@
 // Kompajliranje:
-// g++ -o sv sv.cpp util.cpp util_t.cpp -lGLEW -lGL -lGLU -lglut -lpthread
+// g++ -o Solar_1 Solar_1.cpp util.cpp util_t.cpp -lGLEW -lGL -lGLU -lglut -lpthread
 
 #ifdef _WIN32
 #include <windows.h>             //bit ce ukljuceno ako se koriste windows
@@ -36,33 +36,37 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
 #include "util_t.hpp"
-#include "sv.hpp"
+#include "main.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
 //*********************************************************************************
 
 GLuint window; 
-GLint Width = 1000, Height = 1000; 
 
-GLuint VAO;
-GLuint programID,programID_t;
-GLuint MVPMatrixID,MVPMatrixID_t;
-GLuint ColorID,ColorID_t;
+//*********************************************************************************
+//	Function Prototypes.
+//*********************************************************************************
 
-//#define MaxNumPts 64
-glm::mat4 projection; 
+GLuint vertexArrayID;
+GLuint programID;
+GLuint MVPMatrixID;
+GLuint ColorID;
+GLuint DetailID,ScaleID;
 
-// These three variables control the animation's state and speed.
-static float broj = 0.0;
-static float AnimateIncrement = 24.0;  // Time step for animation (hours)
+glm::mat4 projection;
+
 static GLenum spinMode = GL_TRUE;
 static GLenum singleStep = GL_FALSE;
 
-static const GLfloat colors[]={1.0f, 1.0f, 0.0f}, coloro[]={1.0f, 1.0f, 1.0f}; 
+// These three variables control the animation's state and speed.
+static float HourOfDay = 0.0;
+static float DayOfYear = 0.0;
+static float AnimateIncrement = 24.0;  // Time step for animation (hours)
 
+static const GLfloat colors[]={1.0f, 1.0f, 0.0f}, colorz[]={0.2f, 0.2f, 1.0f}, colorm[]={0.3f, 0.7f, 0.3f}, scal=1.0f;
+static GLfloat det=20.0f;
 
 // glutKeyboardFunc is called below to set this function to handle
 //		all "normal" key presses.
@@ -141,11 +145,11 @@ int main(int argc, char ** argv)
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInitContextFlags(GLUT_DEBUG);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH );
-	glutInitWindowPosition( 20, 60 );
-    glutInitWindowSize( Width, Height );
+	glutInitWindowPosition( 0, 0 );
+    glutInitWindowSize( 600, 360 );
 	glutInit(&argc, argv);
 
-	window = glutCreateWindow( "Glut OpenGL Prozor" );
+	window = glutCreateWindow( "Solar System Demo" );
 	glutReshapeFunc(resizeWindow);
 	glutDisplayFunc(myDisplay);
 	glutKeyboardFunc( KeyPressFunc );
@@ -171,15 +175,15 @@ bool init_data()
 {
 	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
 	
-	// Stvori jedan VAO i njegov identifikator pohrani u VAO
-	glGenVertexArrays(1, &VAO);
+	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
+	glGenVertexArrays(1, &vertexArrayID);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
-	glBindVertexArray(VAO);
+	glBindVertexArray(vertexArrayID);
 
-	// An array of 12 vectors which represents 12 vertices
-	static const GLfloat patch[]={150.0f, 14.0f, 15.0f, 0.0f, 
-								  0.0f, 200.0f, 0.0f, 1.0f,
-								  0.0f, -200.0f, 0.0f, 1.0f};
+	// An array of 3 vectors which represents 3 vertices
+	static const GLfloat patch[]={ 0.0f, 0.0f, 0.0f, 1.0f,
+									0.0f, 0.0f, 0.0f, 0.4f,
+									0.0f, 0.0f, 0.0f, 0.1f };
 
 	// This will identify our vertex buffer
 	GLuint vertexbuffer;
@@ -202,13 +206,8 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+	programID = loadShaders("SimpleVertexShader.vert", "frag.frag", "TessCont.tesc", "TessEval.tese");
 	if(programID==0) {
-		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
-		return false;
-	}
-	programID_t = loadShaders_t("SimpleVertexShader_t.vert", "SimpleFragmentShader.frag", "TessCont.tesc", "TessEval.tese");
-	if(programID_t==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
 	}
@@ -216,8 +215,8 @@ bool init_data()
 	// Get a handle for our uniforms for later when drawing...
 	MVPMatrixID = glGetUniformLocation(programID, "MVP");
 	ColorID = glGetUniformLocation(programID, "clr");
-	MVPMatrixID_t = glGetUniformLocation(programID_t, "MVP");
-	ColorID_t = glGetUniformLocation(programID_t, "clr");
+	DetailID = glGetUniformLocation(programID, "uDetail");
+	ScaleID = glGetUniformLocation(programID, "uScale");
 
 	return true;
 }
@@ -228,53 +227,47 @@ bool init_data()
 
 void myDisplay()
 {
+	std::stack<glm::mat4> mvstack;
+	
  	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
+ 	
 	if (spinMode) {
-		broj += AnimateIncrement/24.0;
-        broj = broj - ((int)(broj/365))*365;
+		// Update the animation state
+        HourOfDay += AnimateIncrement/100.0;
+        DayOfYear += AnimateIncrement/24.0;
+
+        HourOfDay = HourOfDay - ((int)(HourOfDay/24))*24;
+        DayOfYear = DayOfYear - ((int)(DayOfYear/365))*365;
 		}
   
-
- 	// Model matrix : 
+  
+ 	// Model matrix : an identity matrix (model will be at the origin)
  	glm::mat4 model = glm::mat4(1.0f);
- 	model = glm::translate (model,glm::vec3(Width/2, Height/2, 0.0f));
- 	model = glm::rotate (model,glm::radians(360.0f*broj/365.0f), glm::vec3(0.0f, 1.0f, 0.0f));
- 	model = glm::rotate (model,glm::radians(20.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+ 	model = glm::translate (model,glm::vec3(0.0f, 0.0f, -8.0f));
+ 	model = glm::rotate (model,glm::radians(15.0f), glm::vec3(1.0f, 0.0f, 0.0f));
  	// Our ModelViewProjection : multiplication of our 2 matrices
- 	glm::mat4 mvp = projection * model; 
+ 	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
 	
-	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator VAO
-	glBindVertexArray(VAO);
+	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
+	glBindVertexArray(vertexArrayID);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);
-
-	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
-	glUseProgram(programID_t);
-
 	
-// Sfera!!!	
+	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
+	glUseProgram(programID);
+	
+// Sunce!!!	
 
-	glUniformMatrix4fv(MVPMatrixID_t, 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(ColorID_t,1,colors);
+	det=4.0f;
+	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	glUniform3fv(ColorID,1,colors);
+	glUniform1f(DetailID,det); 
+	glUniform1f(ScaleID,scal); 
 	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); 
 	glPatchParameteri(GL_PATCH_VERTICES,1);
 	glDrawArrays(GL_PATCHES,0, 1);
-	
-// Os!!!
 
-	glUseProgram(programID);
-	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(ColorID,1,coloro);
-	glDrawArrays(GL_LINES,1, 2);  // novi vertex shader
-		
-	// onemogući slanje atributa nula shaderu
-	glDisableVertexAttribArray(0);
-	
-	if ( singleStep ) {
-		spinMode = GL_FALSE;	// Trigger an automatic redraw for animation
-	}
 
 	glutSwapBuffers();
 	glutPostRedisplay();
@@ -286,13 +279,18 @@ void myDisplay()
 
 void resizeWindow(int w, int h)
 {
-	Width = w;
-	Height = h;
+	float aspectRatio;
 	h = (h == 0) ? 1 : h;
 	w = (w == 0) ? 1 : w;
 	glViewport( 0, 0, w, h );	// View port uses whole window
+	aspectRatio = (float)w/(float)h;
 	
-    projection = glm::ortho(0.0f,(float) w,0.0f,(float) h,-500.0f,500.0f);
+    if(w<h)
+		projection = glm::frustum(-1.0f, 1.0f, -1.0f/aspectRatio, 1.0f/aspectRatio, 1.0f, 30.0f);
+	else
+		projection = glm::frustum(-1.0f*aspectRatio, 1.0f*aspectRatio, -1.0f, 1.0f, 1.0f, 30.0f);
+
+//    projection = glm::ortho(-5.0f,5.0f,-5.0f,5.0f,1.0f,30.0f);
 }
 
 

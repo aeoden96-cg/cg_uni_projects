@@ -34,8 +34,8 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
-#include "util_g.hpp"
+#include "util/Shader.h"
+
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -53,6 +53,7 @@ void myReshape		(int width, int height);
 void myMouse		(int button, int state, int x, int y);
 void myKeyboard		(unsigned char theKey, int mouseX, int mouseY);
 
+Shader s,s2;
 GLuint VAO;
 GLuint programID, program_geometryID;
 GLuint MVPMatrixID, MVMatrixID, NMatrixID, ColorID, MVPMatrix_geometryID, MVMatrix_geometryID, PMatrix_geometryID, Normallength_geometryID;
@@ -154,23 +155,22 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	GLuint VertexShaderID;
-	GLuint FragmentShaderID;
 
-	programID = loadShaders("SimpleVertexShader.vert",
-                            "SimpleFragmentShader.frag",
-                            "SimpleGeometryShader.geom",
-                            &VertexShaderID,
-                            &FragmentShaderID);
+    programID = s.load_shaders({"DEFAULT",
+                                "SimpleFragmentShader.frag",
+                                "SimpleGeometryShader.geom", "" , ""});
+
 	
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
 	}
+
+    program_geometryID = s.load_shaders({"DEFAULT",
+                                "SimpleFragmentShader.frag",
+                                "GeometryShader.geom", "" , ""});
 	
-	program_geometryID = loadShaders_g("GeometryShader.geom",
-                                       VertexShaderID,
-                                       FragmentShaderID);
+
 	if(program_geometryID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

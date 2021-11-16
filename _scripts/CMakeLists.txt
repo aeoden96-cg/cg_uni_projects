@@ -42,7 +42,7 @@ file(COPY ${MY_SHADERS} DESTINATION .)
 #        src/torus.hpp
 #        src/util_t.cpp
 #        src/util_t.hpp)
-#configure_file(src/SimpleFragmentShader.frag SimpleFragmentShader.frag COPYONLY)
+#configure_file(src/frag.frag frag.frag COPYONLY)
 #configure_file(src/SimpleVertexShader.vert SimpleVertexShader.vert COPYONLY)
 #configure_file(src/TessCont.tesc TessCont.tesc COPYONLY)
 #configure_file(src/TessEval.tese TessEval.tese COPYONLY)

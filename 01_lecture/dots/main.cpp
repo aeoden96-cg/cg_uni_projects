@@ -34,7 +34,10 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
+//#include "util/util.hpp"
+#include "util/Shader.h"
+
+
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -62,6 +65,9 @@ GLuint programID;
 GLuint MVPMatrixID;
 GLuint ColorID;
 
+
+//std::vector<std::string> list = {"SimpleVertexShader.vert","frag.frag"};
+
 #define MaxNumPts 64
 GLfloat PointArray [MaxNumPts][2];
 int NumPts = 0;
@@ -71,7 +77,7 @@ glm::mat4 projection;
 
 int WindowHeight;
 int WindowWidth;
-
+Shader s;
 void rotatefunkcija()
 {model = glm::rotate (model,0.17f,glm::vec3(0.0f,0.0f,1.0f)); // radijani!
 }
@@ -152,7 +158,6 @@ int main(int argc, char ** argv)
         //ss2
         int i=pthread_getconcurrency();        
 	#endif
-
 	glutInitContextVersion(3, 3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInitContextFlags(GLUT_DEBUG);
@@ -168,7 +173,13 @@ int main(int argc, char ** argv)
 	glutKeyboardFunc(myKeyboardFunc);
 
 	glewExperimental = GL_TRUE;
-	glewInit();
+	//glewInit();
+
+    GLenum err = glewInit();
+    if (err != GLEW_OK)
+        exit(1); // or handle the error in a nicer way
+    if (!GLEW_VERSION_2_1)  // check that the machine supports the 2.1 API.
+        exit(1); // or handle the error in a nicer way
 
 	if(!init_data()) return 1;
 
@@ -222,7 +233,10 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+    programID = s.load_shaders({"SimpleVertexShader.vert","SimpleFragmentShader.frag" , "" , "" , ""});
+    //	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
+
+
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
@@ -256,7 +270,8 @@ void myDisplay()
 	glEnableVertexAttribArray(0);
 
 	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
-	glUseProgram(programID);
+//	glUseProgram(programID);
+    s.use();
 
 	// Send our transformation to the currently bound shader, in the "MVP" uniform
 	// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)

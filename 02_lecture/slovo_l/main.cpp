@@ -165,7 +165,7 @@ bool init_data()
     glEnableVertexAttribArray(0);
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
 	if(programID==0) { std::cout << "Loading shaders error" << std::endl; return false;}
 
 

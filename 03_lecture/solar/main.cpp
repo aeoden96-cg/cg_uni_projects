@@ -37,7 +37,7 @@
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
 #include "util_t.hpp"
-#include "cube.hpp"
+#include "main.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -206,7 +206,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag", "TessCont.tesc", "TessEval.tese");
+	programID = loadShaders("SimpleVertexShader.vert", "frag.frag", "TessCont.tesc", "TessEval.tese");
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
@@ -259,7 +259,7 @@ void myDisplay()
 	
 // Sunce!!!	
 
-	det=4.0f;
+	det=20.0f;
 	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
 	glUniform3fv(ColorID,1,colors);
 	glUniform1f(DetailID,det); 
@@ -267,7 +267,37 @@ void myDisplay()
 	glPolygonMode(GL_FRONT_AND_BACK,GL_LINE); 
 	glPatchParameteri(GL_PATCH_VERTICES,1);
 	glDrawArrays(GL_PATCHES,0, 1);
+	
+// Zemlja!!!
 
+	model = glm::rotate (model, glm::radians(360.0f*DayOfYear/365.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::translate (model,glm::vec3(4.0f, 0.0f, 0.0f));
+	mvstack.push(model);
+	model = glm::rotate (model, glm::radians(360.0f*HourOfDay/24.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	mvp = projection * model;
+	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	glUniform3fv(ColorID,1,colorz);
+	glDrawArrays(GL_PATCHES,1, 1);
+	model = mvstack.top();
+	mvstack.pop();
+	
+// Mjesec!!!
+
+	model = glm::rotate (model, glm::radians(360.0f*12.0f*DayOfYear/365.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+	model = glm::translate (model,glm::vec3(0.7f, 0.0f, 0.0f));
+	mvp = projection * model;
+	det=60.0f;
+	glUniform1f(DetailID,det); 
+	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	glUniform3fv(ColorID,1,colorm);
+	glDrawArrays(GL_PATCHES,2, 1);
+	
+	// onemogući slanje atributa nula shaderu
+	glDisableVertexAttribArray(0);
+	
+	if ( singleStep ) {
+		spinMode = GL_FALSE;	// Trigger an automatic redraw for animation
+	}
 
 	glutSwapBuffers();
 	glutPostRedisplay();

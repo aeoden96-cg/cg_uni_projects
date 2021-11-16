@@ -1,16 +1,16 @@
 // Kompajliranje:
-// g++ -o dots_vise_tocaka dots_vise_tocaka.cpp util.cpp util_t.cpp -lGLEW -lGL -lGLU -lglut -lpthread
+// g++ -o Afine_trans_trokuta Afine_trans_trokuta.cpp util.cpp -lGLEW -lGL -lGLU -lglut -lpthread
 
 #ifdef _WIN32
 #include <windows.h>             //bit ce ukljuceno ako se koriste windows
 #endif
 
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <iostream>
-using namespace std;
-
+#include <stack> 
 
 #include <GL/glew.h>
 #include <GL/freeglut.h>
@@ -37,14 +37,13 @@ using namespace std;
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
 #include "util.hpp"
-#include "util_t.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
 //*********************************************************************************
 
 GLuint window; 
-GLuint sub_width = 500, sub_height = 500;
+GLuint sub_width = 256, sub_height = 256;
 
 //*********************************************************************************
 //	Function Prototypes.
@@ -52,27 +51,15 @@ GLuint sub_width = 500, sub_height = 500;
 
 void myDisplay		();
 void myReshape		(int width, int height);
-void myMouseFunc	( int button, int state, int x, int y );
-void Motion			(int x, int y);
-void myKeyboardFunc	( unsigned char key, int x, int y );
 
-const int MAX_POINTS = 20;
-GLfloat w[MAX_POINTS];
 GLuint vertexArrayID;
-GLuint programID,programID_t;
-GLuint MVPMatrixID,MVPMatrixID_t; 
-GLuint ColorID,ColorID_t;
-GLuint OrderID;
+GLuint programID;
+GLuint MVPMatrixID;
+GLuint ColorID;
 
-GLuint vertexbuffer;
-
-const float Xmin = 0.0, Xmax = 1.0;
-const float Ymin = 0.0, Ymax = 1.0;
-
-glm::vec4 Tocke[MAX_POINTS],Poligon[MAX_POINTS];
-int n=0;
-GLdouble eps=0.03;
-static const GLfloat color1[]={1.0f, 0.0f, 1.0f}, color2[]={0.0f, 1.0f, 1.0f}, color3[]={1.0f, 1.0f, 0.0f};
+GLuint vertexbuffer1,vertexbuffer2;
+float theta,l,r;
+static const GLfloat color1[]={1.0f, 0.9f, 0.0f}, color2[]={1.0f, 1.0f, 1.0f};
 
 bool init_data(); // nasa funkcija za inicijalizaciju podataka
 
@@ -87,95 +74,26 @@ int main(int argc, char ** argv)
         //ss2
         int i=pthread_getconcurrency();        
 	#endif
-	
-	for (int i=0; i<MAX_POINTS; i++) {
-		std::cout << "w(" << i << ")=";
-		//std::cin >> w[i];
-        w[i] = 1;
 
-	}
-
-	glutInitContextVersion(4, 3);
+	glutInitContextVersion(3, 3);
 	glutInitContextProfile(GLUT_CORE_PROFILE);
 	glutInitContextFlags(GLUT_DEBUG);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
 	glutInitWindowSize(sub_width,sub_height);
-	glutInitWindowPosition(20,60);
+	glutInitWindowPosition(100,100);
 	glutInit(&argc, argv);
 
 	window = glutCreateWindow("Glut OpenGL Prozor");
 	glutReshapeFunc(myReshape);
 	glutDisplayFunc(myDisplay);
-	glutMouseFunc(myMouseFunc);
-	glutMotionFunc(Motion);
-	glutKeyboardFunc(myKeyboardFunc);
 
 	glewExperimental = GL_TRUE;
 	glewInit();
 
 	if(!init_data()) return 1;
 
-	// Omogući uporabu Z-spremnika
-	glEnable(GL_DEPTH_TEST);
-	// Prihvaćaj one fragmente koji su bliže kameri u smjeru gledanja
-	glDepthFunc(GL_LESS);
-
 	glutMainLoop();
     	return 0;
-}
-
-void myKeyboardFunc( unsigned char key, int x, int y ){
-	switch ( key ) {
-
-	case 27:
-		exit(1);
-
-	}
-}
-
-void myMouseFunc( GLint button, GLint state, GLint x, GLint y )
-{
-    if( button == GLUT_LEFT_BUTTON && state == GLUT_DOWN )
-    {
-		GLfloat xPos = GLfloat( x )/(GLfloat)sub_width ;
-        GLfloat yPos = 1-GLfloat( y )/(GLfloat)sub_height; 
-
-		for( int i=0; i<n; ++i ) 
-			if( glm::length(glm::vec2(Poligon[i])- glm::vec2(xPos,yPos))<eps || n>=MAX_POINTS ) return;
-		
-		Poligon[n]=glm::vec4(xPos ,yPos, 0.0f, 1.0f);
-		Tocke[n]=w[n]*Poligon[n];
-		n++;
-        std::cout << n ;
-
-	}
- 
-       glutPostRedisplay();
-
-}
-
-void Motion(int x, int y)
-{
-	GLfloat xPos = GLfloat( x )/(GLfloat)sub_width ;
-    GLfloat yPos = 1-GLfloat( y )/(GLfloat)sub_height; 
-
-		
-	for( int i=0; i<n; ++i ) 
-		if( glm::length(glm::vec2(Poligon[i])-glm::vec2(xPos,yPos))<eps )
-			{Poligon[i].x=xPos; Poligon[i].y=yPos; 
-			 Tocke[i]=w[i]*Poligon[i]; break; }
-				  
-	glutPostRedisplay();
-
-} 
-
-void myKeyboard(unsigned char key, int x, int y)
-{
-   switch (key) {
-      case 27:
-      exit(0);
-      break;
-   }
 }
 
 //*********************************************************************************
@@ -183,38 +101,50 @@ void myKeyboard(unsigned char key, int x, int y)
 //*********************************************************************************
 
 bool init_data()
-{
-	glClearColor (0.0, 0.0, 0.0, 0.0);
-	
+{	
 	// Stvori jedan VAO i njegov identifikator pohrani u vertexArrayID
 	glGenVertexArrays(1, &vertexArrayID);
 	// Učini taj VAO "trenutnim". Svi pozivi glBindBuffer(...) ispod upisuju veze u trenutni (dakle ovaj) VAO.
 	glBindVertexArray(vertexArrayID);
+
+	// An array of 3 vectors which represents 3 vertices
+	static const GLfloat triangle[] = {
+	   1.0f, -1.0f, 0.0f,
+	   0.0f, 1.0f, 0.0f,
+	   -1.0f,  -1.0f, 0.0f,
+	};
 	
-	// Generate 1 buffer, put the resulting identifier in vertexbuffer
-	glGenBuffers(1, &vertexbuffer);
-	// The following commands will talk about our 'vertexbuffer' buffer
-	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer);
-	// Podesi da se 0. atribut dohvaca iz vertex spremnika
-	glVertexAttribPointer(
-		0,                  // attribute 0.
-		4,                  // size
-		GL_FLOAT,           // type
-		GL_FALSE,           // normalized?
-		0,                  // stride
-		(void*)0            // array buffer offset
-	); 
+	theta=30;
+	l=5.0;
+	r=1.0;
+	
+	GLfloat x= (l+1)*cos( theta/180*M_PI ),y=(l+1)*sin( theta/180*M_PI );
+	
+	// An array of 2 vectors which represents a line of reflection
+	static GLfloat coord[] = {
+	   0.0f, 0.0f, 0.0f,
+	   x, y, 0.0f
+	};
+
+	// Generate 1 buffer, put the resulting identifier in vertexbuffer1
+	glGenBuffers(1, &vertexbuffer1);
+	// The following commands will talk about our 'vertexbuffer1' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer1);
+	// Give our vertices to OpenGL.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+
+	// Generate 1 buffer, put the resulting identifier in vertexbuffer2
+	glGenBuffers(1, &vertexbuffer2);
+	// The following commands will talk about our 'vertexbuffer2' buffer
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+	// Give our vertices to OpenGL.
+	glBufferData(GL_ARRAY_BUFFER, sizeof(coord), coord, GL_STATIC_DRAW);
+
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
 	if(programID==0) {
-		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
-		return false;
-	}
-
-	programID_t = loadShaders_t("SimpleVertexShader_t.vert", "SimpleFragmentShader.frag", "TessCont.tesc", "TessEval.tese");
-	if(programID_t==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
 	}
@@ -222,8 +152,6 @@ bool init_data()
 	// Get a handle for our uniforms for later when drawing...
 	MVPMatrixID = glGetUniformLocation(programID, "MVP");
 	ColorID = glGetUniformLocation(programID, "clr");
-	MVPMatrixID_t = glGetUniformLocation(programID_t, "MVP");
-	ColorID_t = glGetUniformLocation(programID_t, "clr");	
 
 	return true;
 }
@@ -234,47 +162,68 @@ bool init_data()
 
 void myDisplay()
 {
+	std::stack<glm::mat4> mvstack;
+	
+	glClearColor( 0.0f, 0.0f, 0.0f, 0.0f );
  	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
- 	// Projection matrix
- 	glm::mat4 projection = glm::ortho(Xmin, Xmax, Ymin, Ymax, -1.0f, 1.0f); 
- 
+  
+ 	// For an ortho camera :
+ 	glm::mat4 projection = glm::ortho(-8.0f,8.0f,-8.0f,8.0f,-1.0f,1.0f); // In world coordinates
+  
  	// Model matrix : an identity matrix (model will be at the origin)
  	glm::mat4 model = glm::mat4(1.0f);
- 	// Our ModelView : multiplication of our 2 matrices
- 	glm::mat4 mvp=projection * model;
+ 	// Our ModelViewProjection : multiplication of our 2 matrices
+ 	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki
 
 	// Postavi da se kao izvor toka vertexa koristi VAO čiji je identifikator vertexArrayID
 	glBindVertexArray(vertexArrayID);
 
 	// omogući slanje atributa nula shaderu - pod indeks 0 u init smo povezali pozicije vrhova (x,y,z)
 	glEnableVertexAttribArray(0);
-
-	// Crtanje kontrolnog poligona
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Poligon), Poligon, GL_DYNAMIC_DRAW);	
-	glUseProgram(programID);
-	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(ColorID,1,color2);
-	glPointSize(6);	
-	glDrawArrays(GL_POINTS, 0, n);	
-	glUniform3fv(ColorID,1,color3);
-	glLineWidth(1);	
-	glDrawArrays(GL_LINE_STRIP, 0, n);
 	
-	// Crtanje konike
-	glBufferData(GL_ARRAY_BUFFER, sizeof(Tocke), Tocke, GL_DYNAMIC_DRAW);	
-	glUseProgram(programID_t);
-	glUniformMatrix4fv(MVPMatrixID_t, 1, GL_FALSE, &mvp[0][0]);
-	glUniform3fv(ColorID_t,1,color1);
-	glPointSize(2);
-	glPatchParameteri(GL_PATCH_VERTICES,3);
+	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
+	glUseProgram(programID);
 
-    for (int k=2; k< MAX_POINTS;k+=2){
-
-        if (n>k) {
-            glDrawArrays(GL_PATCHES, k-2, 3); }
-    }
-
+	// Send our transformation to the currently bound shader, in the "MVP" uniform
+	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer2);
+	glVertexAttribPointer(
+	   0,                  // attribute 0.
+	   3,                  // size
+	   GL_FLOAT,           // type
+	   GL_FALSE,           // normalized?
+	   0,                  // stride
+	   (void*)0            // array buffer offset
+	); 
+	glUniform3fv(ColorID,1,color2);
+	glDrawArrays(GL_LINES, 0, 2); // crtanje pravca
+	
+	glBindBuffer(GL_ARRAY_BUFFER, vertexbuffer1);
+	glVertexAttribPointer(
+	   0,                  // attribute 0.
+	   3,                  // size
+	   GL_FLOAT,           // type
+	   GL_FALSE,           // normalized?
+	   0,                  // stride
+	   (void*)0            // array buffer offset
+	);
+	model = glm::rotate (model, glm::radians(theta), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::translate (model,glm::vec3(l, 0.0f, 0.0f));
+	mvstack.push(model);
+	model = glm::translate (model,glm::vec3(0.0f, r+1, 0.0f));
+	mvp = projection * model;
+	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	glUniform3fv(ColorID,1,color1);
+	glDrawArrays(GL_LINE_LOOP, 0, 3); // crtanje gornjeg trokuta
+	
+	model = mvstack.top();
+	mvstack.pop();
+	model = glm::rotate (model, glm::radians(180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
+	model = glm::translate (model,glm::vec3(0.0f, r+1, 0.0f));
+	mvp = projection * model;
+	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);
+	glDrawArrays(GL_LINE_LOOP, 0, 3); // crtanje donjeg trokuta
 
 	// onemogući slanje atributa nula shaderu
 	glDisableVertexAttribArray(0);
@@ -288,8 +237,7 @@ void myDisplay()
 
 void myReshape(int width, int height)
 {
-	sub_width = width;                      	// zapamti novu sirinu prozora
+	sub_width = width;                  // zapamti novu sirinu prozora
     sub_height = height;				// zapamti novu visinu prozora
-    glViewport(0, 0, width, height);
+    glViewport( 0, 0, sub_width, sub_height );
 }
-

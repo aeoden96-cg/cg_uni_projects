@@ -1,4 +1,4 @@
-ifndef UTIL_G_LOADER_HPP
+#ifndef UTIL_G_LOADER_HPP
 #define UTIL_G_LOADER_HPP
 
 #include <GL/glew.h>

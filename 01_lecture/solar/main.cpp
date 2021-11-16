@@ -36,8 +36,8 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util_t.hpp"
-#include "Solar.hpp"
+#include "util/Shader.h"
+#include "main.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -54,6 +54,8 @@ GLuint programID;
 GLuint MVPMatrixID;
 GLuint ColorID;
 GLuint DetailID,ScaleID;
+
+Shader s;
 
 glm::mat4 projection;
 
@@ -206,7 +208,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag", "TessCont.tesc", "TessEval.tese");
+	programID = s.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","", "TessCont.tesc", "TessEval.tese"});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
@@ -255,7 +257,8 @@ void myDisplay()
 	glEnableVertexAttribArray(0);
 	
 	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
-	glUseProgram(programID);
+	//glUseProgram(programID);
+    s.use();
 	
 // Sunce!!!	
 

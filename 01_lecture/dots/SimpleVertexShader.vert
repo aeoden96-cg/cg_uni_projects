@@ -14,7 +14,9 @@ void main(){
 
     gl_Position = MVP * vertexPosition_modelspace; 
 
-    // U fragmentColor samo zapisi primljeni vertexColor; interpoliranu vrijednost te varijable cemo
+
+
+    // U vragmentColor samo zapisi primljeni vertexColor; interpoliranu vrijednost te varijable cemo
     // potom primiti u fragmentshaderu pod istim imenom (tamo je moramo tako deklarirati)
     fragmentColor = clr;
 }

@@ -38,7 +38,7 @@
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
 #include "util_t.hpp"
-#include "Solar_ilum.hpp"
+#include "main.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.

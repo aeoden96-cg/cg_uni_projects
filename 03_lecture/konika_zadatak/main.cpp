@@ -36,7 +36,7 @@
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
 #include "util_t.hpp"
-#include "torus.hpp"
+#include "main.hpp"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -163,7 +163,7 @@ bool init_data()
 	glBindVertexArray(VAO);
 
 	// An array of 1 vector which represents torus
-	static const GLfloat patch[]={ 2.0f, 25.0f, 0.5f, 8.0f};
+	static const GLfloat patch[]={ 2.0f, 25.0f, 0.4f, 10.0f};
 
 	// This will identify our vertex buffer
 	GLuint vertexbuffer;
@@ -186,7 +186,10 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag", "TessCont.tesc", "TessEval.tese");
+	programID = loadShaders("SimpleVertexShader.vert",
+                            "frag.frag",
+                            "TessCont.tesc",
+                            "TessEval.tese");
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
@@ -219,7 +222,7 @@ void myDisplay()
  	glm::mat4 model = glm::mat4(1.0f);
  	model = glm::translate (model,glm::vec3(0.0f, 0.0f, -8.0f));
  	model = glm::translate (model,glm::vec3(-0.5f, 0.5f, 0.0f));
- 	model = glm::rotate (model,glm::radians(CurrentAngle), glm::vec3(1.0f, 1.0f, 0.0f));
+ 	//model = glm::rotate (model,glm::radians(CurrentAngle), glm::vec3(1.0f, 1.0f, 0.0f));
  	model = glm::translate (model,glm::vec3(0.5f, -0.5f, 0.0f));
  	// Our ModelViewProjection : multiplication of our 2 matrices
  	glm::mat4 mvp = projection * model; // Kasnije se mnozi matrica puta tocka - model matrica mora biti najbliza tocki

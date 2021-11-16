@@ -1,18 +1,14 @@
 #version 330 core
 
-// Input vertex data, different for all executions of this shader.
-layout(location = 0) in vec4 vertexPosition_modelspace;
+uniform vec3 clr;
 
-// Output data for Tessellation shader.
-out vec3 vCenter;
-out float vRadius;
+// Ouput data
+out vec3 color;
 
-void main(){
+void main()
+{
 
-    vCenter = vertexPosition_modelspace.xyz;
-	vRadius = vertexPosition_modelspace.w;
-    
-    gl_Position = vertexPosition_modelspace; 
+	color = clr;
 
 }
-
+ 
