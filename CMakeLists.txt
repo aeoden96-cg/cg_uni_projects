@@ -2,29 +2,6 @@ cmake_minimum_required(VERSION 3.21)
 project(my_solution)
 set(CMAKE_CXX_STANDARD 17)
 
-MACRO(PROJECT_INIT2)
-
-
-    ADD_EXECUTABLE(
-            ${project_name}
-            main.cpp main.hpp)
-
-    include_directories( ${OPENGL_INCLUDE_DIRS}  ${GLUT_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS})
-    target_link_libraries(
-            ${project_name} LINK_PUBLIC
-            SHADER
-            ${OPENGL_LIBRARIES}
-            ${GLUT_LIBRARY}
-            ${GLEW_LIBRARIES} -lpthread -lm -lGL -lGLU -lglut)
-
-
-    file(GLOB MY_SHADERS "*.tesc" "*.tese" "*.vert" "*.frag" "*.geom")
-    foreach(shader ${MY_SHADERS})
-        configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-    endforeach()
-
-
-ENDMACRO()
 
 MACRO(PROJECT_INIT)
 
