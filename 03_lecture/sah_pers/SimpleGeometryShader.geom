@@ -1,14 +1,20 @@
-#version 330 core
+#version 330
 
-// interpolirana vrijednost vrijednosti koja je poslana iz vertex shadera
-flat in vec3 fragmentColor;
+layout (triangles) in;
+layout (triangle_strip) out;
+layout (max_vertices = 3) out;
 
-// Ouput data
-out vec3 color;
+in vec3 geomColor[3];
+flat out vec3 fragmentColor;
 
-void main()
-{
+void main(){
 
-	color = fragmentColor;
-
+	int i;
+	for (i=0; i<gl_in.length(); i++)
+	{
+		gl_Position = gl_in[i].gl_Position;
+		fragmentColor = geomColor[i]; // svi fragmenti u primitivi ce biti boje geomColor[2];
+		EmitVertex();
+	}
+	EndPrimitive();
 }

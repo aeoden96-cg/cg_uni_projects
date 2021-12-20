@@ -35,7 +35,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
+#include "util/Shader.h"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -58,6 +58,7 @@ GLuint programID;
 GLuint MVPMatrixID;
 
 glm::mat4 projection;
+Shader s;
 
 const GLint first[8]={0,18,36,54,72,90,108,126};
 const GLint count[8]={18,18,18,18,18,18,18,18};
@@ -217,7 +218,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag", "SimpleGeometryShader.geom");
+	programID = s.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag", "SimpleGeometryShader.geom" ,"",""});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
@@ -261,7 +262,7 @@ void myDisplay()
 	glEnableVertexAttribArray(1);
 
 	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
-	glUseProgram(programID);
+    s.use();
 
 	// Send our transformation to the currently bound shader, in the "MVP" uniform
 	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);

@@ -15,7 +15,7 @@ MACRO(PROJECT_INIT2)
             SHADER
             ${OPENGL_LIBRARIES}
             ${GLUT_LIBRARY}
-            ${GLEW_LIBRARIES} -lpthread -lm)
+            ${GLEW_LIBRARIES} -lpthread -lm -lGL -lGLU -lglut)
 
 
     file(GLOB MY_SHADERS "*.tesc" "*.tese" "*.vert" "*.frag" "*.geom")
@@ -26,34 +26,15 @@ MACRO(PROJECT_INIT2)
 
 ENDMACRO()
 
-MACRO(PROJECT_INIT shader_location)
+MACRO(PROJECT_INIT)
 
-#    set (additional_args ${ARGN})
-#    list(LENGTH additional_args additional_count)
-#    if (${additional_count} GREATER 0)
-#        list(GET additional_args 0 optional_arg)
-#        message ("Got an optional arg: ${optional_arg}")
-#    endif ()
-    if(shader_location MATCHES GIVEN)
+    file(GLOB MY_SHADERS "*.tesc" "*.tese" "*.vert" "*.frag" "*.geom")
+    foreach(shader ${MY_SHADERS})
+        configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+    endforeach()
 
-        file(GLOB MY_SHADERS "*.tesc" "*.tese" "*.vert" "*.frag" "*.geom")
-        foreach(shader ${MY_SHADERS})
-            configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-        endforeach()
 
-    elseif(shader_location MATCHES DEFAULT)
-        file(GLOB MY_SHADERS "*.tesc" "*.tese" "*.vert" "*.frag" "*.geom")
-        foreach(shader ${MY_SHADERS})
-            configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
-        endforeach()
 
-        #copy DEFAULT shaders to BUILD
-        set(DEFAULT_SHADERS ${PROJECT_SOURCE_DIR}/default_shaders/vert.vert ${PROJECT_SOURCE_DIR}/default_shaders/frag.frag)
-#        configure_file(${DEFAULT_SHADERS} ${CMAKE_CURRENT_BINARY_DIR}/default_shaders COPYONLY)
-        foreach(shader ${DEFAULT_SHADERS})
-            configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR}/ COPYONLY)
-        endforeach()
-    endif()
 #    list(LENGTH shader_location shader_location_n)
 #    if (${shader_location_n} GREATER 1)
 #
@@ -64,7 +45,6 @@ MACRO(PROJECT_INIT shader_location)
 #    ADD_EXECUTABLE(${project_name} ${MyCSources} ${MyHSources})
 
     set(files_for_compile main.cpp)
-
     if(EXISTS main.hpp)
         list(APPEND files_for_compile main.hpp)
     endif()
@@ -82,7 +62,7 @@ MACRO(PROJECT_INIT shader_location)
             ${OPENGL_LIBRARIES}
             SHADER
             ${GLUT_LIBRARY}
-            ${GLEW_LIBRARIES} -lpthread -lm)
+            ${GLEW_LIBRARIES} -lpthread -lm -lGL -lGLU -lglut)
 
 
 
