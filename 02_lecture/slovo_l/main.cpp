@@ -35,7 +35,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
+#include "util/Shader.h"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -66,7 +66,7 @@ static const GLfloat color1[]={1.0f, 1.0f, 0.0f, 1.0f}, color2[]={1.0f, 1.0f, 1.
 glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 projection = glm::ortho(-5.0f,5.0f,-5.0f,5.0f,-1.0f,1.0f); // In world coordinates
 
-
+Shader s;
 std::stack<glm::mat4> mvstack;
 GLint broj=0;
 
@@ -165,8 +165,7 @@ bool init_data()
     glEnableVertexAttribArray(0);
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
-	if(programID==0) { std::cout << "Loading shaders error" << std::endl; return false;}
+	programID = s.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","","",""});
 
 
 
@@ -192,7 +191,7 @@ void myDisplay()
         glm::mat4  mvp = projection * model;
 
     ////////////////////////// MAIN LOOP
-	glUseProgram(programID);
+    s.use();
     glBindVertexArray(VAO);
 
 	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);

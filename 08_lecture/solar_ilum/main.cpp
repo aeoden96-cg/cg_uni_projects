@@ -37,7 +37,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util_t.hpp"
+#include "util/Shader.h"
 #include "main.hpp"
 
 //*********************************************************************************
@@ -53,7 +53,7 @@ GLuint AmbientalID,EyeDirectionID,IsLocalID,TwoSidedID;
 GLuint MatIndexID; 
 
 GLuint mylightbuffer; 
-
+Shader s;
 glm::mat4 projection;
 
 static GLenum spinMode = GL_TRUE;
@@ -278,7 +278,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "FragmentShader.frag", "TessCont.tesc", "TessEval.tese");
+	programID = s.load_shaders({"SimpleVertexShader.vert", "FragmentShader.frag","", "TessCont.tesc", "TessEval.tese"});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

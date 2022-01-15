@@ -34,7 +34,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
+#include "util/Shader.h"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -68,7 +68,7 @@ int NumPts = 0;
 static const GLfloat color1[]={1.0f, 0.0f, 0.8f, 1.0f}, color2[]={0.0f, 0.0f, 0.0f, 1.0f};
 glm::mat4 model = glm::mat4(1.0f);
 glm::mat4 projection;
-
+Shader s;
 int WindowHeight;
 int WindowWidth;
 
@@ -222,7 +222,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "SimpleFragmentShader.frag");
+	programID = s.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","","",""});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
@@ -256,8 +256,7 @@ void myDisplay()
 	glEnableVertexAttribArray(0);
 
 	// Zatraži da shaderima upravlja naš program čiji je identifikator programID
-	glUseProgram(programID);
-
+    s.use();
 	// Send our transformation to the currently bound shader, in the "MVP" uniform
 	// This is done in the main loop since each model will have a different MVP matrix (At least for the M part)
 	glUniformMatrix4fv(MVPMatrixID, 1, GL_FALSE, &mvp[0][0]);

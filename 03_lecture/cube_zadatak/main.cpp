@@ -36,7 +36,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util_t.hpp"
+#include "util/Shader.h"
 #include "main.hpp"
 
 //*********************************************************************************
@@ -67,7 +67,7 @@ static float AnimateIncrement = 24.0;  // Time step for animation (hours)
 
 static const GLfloat colors[]={1.0f, 1.0f, 0.0f}, colorz[]={0.2f, 0.2f, 1.0f}, colorm[]={0.3f, 0.7f, 0.3f}, scal=1.0f;
 static GLfloat det=20.0f;
-
+Shader s;
 // glutKeyboardFunc is called below to set this function to handle
 //		all "normal" key presses.
 static void KeyPressFunc( unsigned char Key, int x, int y )
@@ -206,7 +206,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag", "TessCont.tesc", "TessEval.tese");
+	programID = s.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag", "","TessCont.tesc", "TessEval.tese"});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

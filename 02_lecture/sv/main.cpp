@@ -36,8 +36,8 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
-#include "util_t.hpp"
+
+#include "util/Shader.h"
 #include "main.hpp"
 
 //*********************************************************************************
@@ -51,7 +51,7 @@ GLuint VAO;
 GLuint programID,programID_t;
 GLuint MVPMatrixID,MVPMatrixID_t;
 GLuint ColorID,ColorID_t;
-
+Shader s1,s2;
 //#define MaxNumPts 64
 glm::mat4 projection; 
 
@@ -202,12 +202,12 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
+	programID = s1.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","","",""});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
 	}
-	programID_t = loadShaders_t("SimpleVertexShader_t.vert", "frag.frag", "TessCont.tesc", "TessEval.tese");
+	programID_t = s2.load_shaders({"SimpleVertexShader_t.vert", "SimpleFragmentShader.frag","", "TessCont.tesc", "TessEval.tese"});
 	if(programID_t==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

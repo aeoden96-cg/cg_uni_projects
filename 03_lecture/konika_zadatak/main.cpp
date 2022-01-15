@@ -35,7 +35,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util_t.hpp"
+#include "util/Shader.h"
 #include "main.hpp"
 
 //*********************************************************************************
@@ -70,7 +70,7 @@ float AnimateStep = 3.0f;			// Rotation step per update
 // These variables set the dimensions of the rectanglar region we wish to view.
 const double Xmin = -5.0, Xmax = 5.0;
 const double Ymin = -5.0, Ymax = 5.0;
-
+Shader s;
 // glutKeyboardFunc is called below to set this function to handle
 //		all "normal" key presses.
 static void KeyPressFunc( unsigned char Key, int x, int y )
@@ -186,10 +186,10 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert",
-                            "frag.frag",
+	programID = s.load_shaders({"SimpleVertexShader.vert",
+                            "SimpleFragmentShader.frag","",
                             "TessCont.tesc",
-                            "TessEval.tese");
+                            "TessEval.tese"});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

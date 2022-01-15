@@ -8,7 +8,7 @@ uniform mat4 MVP;
 
 void main(){
 
-	gl_Position = MVP * vertexPosition_modelspace;
+    gl_Position = MVP * vertexPosition_modelspace;
 
 }
 
