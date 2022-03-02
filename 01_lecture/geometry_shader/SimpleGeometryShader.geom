@@ -1,4 +1,4 @@
-#version 330
+#version 430
 
 layout (triangles) in;
 layout (triangle_strip) out;
@@ -25,15 +25,16 @@ vec3 lightpos = vec3(-1.0, 1.0, 5.0);
 
 void main(){
 
-int i;
-for (i=0; i<gl_in.length(); i++)
-{
-	gl_Position = MVP * gl_in[i].gl_Position;
-	float light = dot(normalize(lightpos-vec3(MV*gl_in[i].gl_Position)),face_normal);
-	light = abs(light); 
-	fragmentColor = outColor*light; 
-	EmitVertex();
+	int i;
+	for (i=0; i<gl_in.length(); i++)
+	{
+		gl_Position = MVP * gl_in[i].gl_Position;
+		float light = dot(normalize(lightpos-vec3(MV*gl_in[i].gl_Position)),face_normal);
+		light = abs(light); 
+		fragmentColor = outColor*light; 
+		EmitVertex();
+	}
+	EndPrimitive();
+
+
 }
-EndPrimitive();
-}
- 

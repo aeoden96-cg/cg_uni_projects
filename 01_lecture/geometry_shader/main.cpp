@@ -156,7 +156,7 @@ bool init_data()
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
 
-    programID = s.load_shaders({"DEFAULT",
+    programID = s.load_shaders({"SimpleVertexShader.vert",
                                 "SimpleFragmentShader.frag",
                                 "SimpleGeometryShader.geom", "" , ""});
 
@@ -166,7 +166,7 @@ bool init_data()
 		return false;
 	}
 
-    program_geometryID = s.load_shaders({"DEFAULT",
+    program_geometryID = s.load_shaders({"SimpleVertexShader.vert",
                                 "SimpleFragmentShader.frag",
                                 "GeometryShader.geom", "" , ""});
 	

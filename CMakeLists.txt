@@ -11,16 +11,6 @@ MACRO(PROJECT_INIT)
     endforeach()
 
 
-
-#    list(LENGTH shader_location shader_location_n)
-#    if (${shader_location_n} GREATER 1)
-#
-#    endif()
-
-#    FILE(GLOB MyCSources *.cpp)
-#    FILE(GLOB MyHSources *.hpp)
-#    ADD_EXECUTABLE(${project_name} ${MyCSources} ${MyHSources})
-
     set(files_for_compile main.cpp)
     if(EXISTS main.hpp)
         list(APPEND files_for_compile main.hpp)
