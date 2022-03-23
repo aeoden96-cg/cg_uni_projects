@@ -13,6 +13,7 @@ Requirements:
 1. Cmake latest version
 2. OpenGL version > 4
 3. CLion IDE or VS Code (+ VS Code CMake addon)
+```To use Clion you need active faculty email for activation.```
 
 Usage:
 
