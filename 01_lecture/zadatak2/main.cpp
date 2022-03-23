@@ -35,7 +35,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
+#include "util/Shader.h"
 #include "main.hpp"
 
 //*********************************************************************************
@@ -61,7 +61,7 @@ int RunMode = 1;		// Used as a boolean (1 or 0) for "on" and "off"
 // The next global variable controls the animation's state and speed.
 float CurrentAngle = 0.0f;			// Angle in degrees
 float AnimateStep = 1.0f;			// Rotation step per update
-
+Shader s;
 // These variables set the dimensions of the rectanglar region we wish to view.
 const double Xmin = 0.0, Xmax = 3.0;
 const double Ymin = 0.0, Ymax = 3.0;
@@ -276,7 +276,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
+	programID = s.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","","",""});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

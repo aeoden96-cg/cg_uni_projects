@@ -35,7 +35,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
+#include "util/Shader.h"
 #include "main.hpp"
 
 //*********************************************************************************
@@ -55,7 +55,7 @@ GLuint programID;
 GLuint MVPMatrixID;
 
 glm::mat4 projection; 
-
+Shader s;
 int RunMode = 1;		// Used as a boolean (1 or 0) for "on" and "off"
 
 // The next global variable controls the animation's state and speed.
@@ -229,7 +229,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
+	programID = s.loadShaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","","",""});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

@@ -58,21 +58,21 @@ find_package(GLUT)
 find_package(GLEW)
 
 
-add_library(UTIL_DEF    util/util.cpp   util/util.hpp)
-add_library(UTIL_GEOM   util/util_g.cpp util/util_g.hpp)
-add_library(UTIL_TESS   util/util_t.cpp util/util_t.hpp)
+#add_library(UTIL_DEF    util/util.cpp   util/util.hpp)
+#add_library(UTIL_GEOM   util/util_g.cpp util/util_g.hpp)
+#add_library(UTIL_TESS   util/util_t.cpp util/util_t.hpp)
 add_library(SHADER      util/Shader.cpp util/Shader.h)
 
 
-set_target_properties(UTIL_DEF  PROPERTIES PUBLIC_HEADER util/util.hpp)
-set_target_properties(UTIL_GEOM PROPERTIES PUBLIC_HEADER util/util_g.hpp)
-set_target_properties(UTIL_TESS PROPERTIES PUBLIC_HEADER util/util_t.hpp)
+#set_target_properties(UTIL_DEF  PROPERTIES PUBLIC_HEADER util/util.hpp)
+#set_target_properties(UTIL_GEOM PROPERTIES PUBLIC_HEADER util/util_g.hpp)
+#set_target_properties(UTIL_TESS PROPERTIES PUBLIC_HEADER util/util_t.hpp)
 set_target_properties(SHADER    PROPERTIES PUBLIC_HEADER util/Shader.h)
 
 
-target_include_directories (UTIL_DEF    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories (UTIL_GEOM   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-target_include_directories (UTIL_TESS   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+#target_include_directories (UTIL_DEF    PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+#target_include_directories (UTIL_GEOM   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
+#target_include_directories (UTIL_TESS   PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories (SHADER      PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 

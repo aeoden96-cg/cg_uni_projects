@@ -6,8 +6,7 @@ layout(location = 0) in vec4 vertexPosition_modelspace;
 // Output data.
 
 void main(){
-    
-    gl_Position = vertexPosition_modelspace; 
+
+    gl_Position = vertexPosition_modelspace;
 
 }
-
