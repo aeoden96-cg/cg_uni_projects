@@ -36,8 +36,7 @@ using namespace std;
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
-#include "util_t.hpp"
+#include "Shader.h"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -64,6 +63,7 @@ GLuint MVPMatrixID,MVPMatrixID_t;
 GLuint ColorID,ColorID_t;
 GLuint OrderID;
 
+Shader s,s2;
 GLuint vertexbuffer;
 
 const float Xmin = 0.0, Xmax = 1.0;
@@ -207,13 +207,13 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
+	programID = s.loadShaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag"});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;
 	}
 
-	programID_t = loadShaders_t("SimpleVertexShader_t.vert", "frag.frag", "TessCont.tesc", "TessEval.tese");
+	programID_t = s2.loadShaders({"SimpleVertexShader_t.vert", "SimpleFragmentShader.frag", "","TessCont.tesc", "TessEval.tese"});
 	if(programID_t==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

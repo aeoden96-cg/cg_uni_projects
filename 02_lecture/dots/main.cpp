@@ -34,7 +34,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util/Shader.h"
+#include "Shader.h"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.

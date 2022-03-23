@@ -35,7 +35,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util.hpp"
+#include "Shader.h"
 
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
@@ -57,7 +57,7 @@ GLuint VAO;
 GLuint programID;
 GLuint MVPMatrixID;
 GLuint ColorID;
-
+Shader s;
 GLuint VBO_letter,vertexbuffer2;
 static const GLfloat color1[]={1.0f, 1.0f, 0.0f, 1.0f}, color2[]={1.0f, 1.0f, 1.0f, 1.0f};
 glm::mat4 model = glm::mat4(1.0f);
@@ -183,7 +183,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = loadShaders("SimpleVertexShader.vert", "frag.frag");
+	programID = s.loadShaders({"SimpleVertexShader.vert", "frag.frag"});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

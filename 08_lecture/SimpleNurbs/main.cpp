@@ -61,7 +61,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util/Shader.h"
+#include "Shader.h"
 
 
 //*********************************************************************************
@@ -99,8 +99,8 @@ const GLfloat circularStrip[4][4][4] = {
 };
 
 // Varijable koje kontroliraju finocu poligonalne meze
-int NumUs = 4;
-int NumVs = 4;
+int NumUs = 2;
+int NumVs = 2;
 	
 GLenum polygonMode = GL_LINE;		
 

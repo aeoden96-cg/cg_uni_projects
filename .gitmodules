@@ -1,3 +1,0 @@
-[submodule "opengl_libs"]
-	path = opengl_libs
-	url = git@github.com:aeoden96/opengl_libs.git

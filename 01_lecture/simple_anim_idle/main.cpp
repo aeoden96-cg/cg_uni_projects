@@ -34,7 +34,7 @@
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util/Shader.h"
+#include "Shader.h"
 #include "main.hpp"
 
 //*********************************************************************************
@@ -239,7 +239,7 @@ bool init_data()
 
 	std::cout << "Going to load programs... " << std::endl << std::flush;
 
-	programID = s.loadShaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","","",""});
+	programID = s.load_shaders({"SimpleVertexShader.vert", "SimpleFragmentShader.frag","","",""});
 	if(programID==0) {
 		std::cout << "Zbog grešaka napuštam izvođenje programa." << std::endl;
 		return false;

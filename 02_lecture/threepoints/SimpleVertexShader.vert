@@ -1,14 +1,18 @@
 #version 330 core
 
-// interpolirana vrijednost vrijednosti koja je poslana iz vertex shadera
-in vec3 fragmentColor;
+// Input vertex data, different for all executions of this shader.
+layout(location = 0) in vec4 vertexPosition_modelspace;
 
-// Ouput data
-out vec3 color;
+// Output data; will be interpolated for each fragment.
+out vec3 fragmentColor;
 
-void main()
-{
+// Values that stay constant for the whole mesh.
+uniform mat4 MVP;
+uniform vec3 clr;
 
-	color = fragmentColor;
+void main(){
 
+	gl_Position = MVP * vertexPosition_modelspace;
+	fragmentColor = clr;
 }
+

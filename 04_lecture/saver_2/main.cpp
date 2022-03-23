@@ -52,7 +52,7 @@ se program izvodi (zadati fiksni fps).
 #endif
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
-#include "util/Shader.h"
+#include "Shader.h"
 
 #define N 500
 #define T 4 
