@@ -1,5 +1,5 @@
 # Computer grapics repo
-Culmination of all projects done at CG lectures @ PMF.
+Culmination of all projects done at CG lectures @ PMF. These are not mine,they are just slightly edited and used for learning.
 Used materials are from these sources:
 * [Računalna grafika FER](http://www.zemris.fer.hr/predmeti/ra/)
 * [Računalna grafika PMF](https://www.pmf.unizg.hr/math/predmet/racgra)
