@@ -24,5 +24,8 @@ and switch between projects in the tree view by selecting CMakeLists file
 of any project
 
 
+Example(changing active project in Clion):
+
+![alt text](change_proj_clion.gif)
 
 
