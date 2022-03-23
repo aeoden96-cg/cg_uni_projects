@@ -35,7 +35,7 @@
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
 //#include "util/util.hpp"
-#include "util/Shader.h"
+#include "Shader.h"
 
 
 

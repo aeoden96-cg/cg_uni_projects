@@ -1,8 +1,16 @@
-set(shader_location GIVEN)
+cmake_minimum_required(VERSION 3.21)
+project(my_solution)
+set(CMAKE_CXX_STANDARD 17)
+add_subdirectory(../../opengl_libs ${CMAKE_CURRENT_BINARY_DIR}/opengl_libs)
+set(SHADER_LIST 
+    "SimpleFragmentShader.frag" 
+    "SimpleVertexShader.vert" 
+)
 
-#will be removed when Shader class is finished
-set(compiled_libs "")
-set(additional_temp_sources util.cpp util.hpp)
+foreach(shader ${SHADER_LIST}) 
+   configure_file(${shader} ${CMAKE_CURRENT_BINARY_DIR} COPYONLY)
+endforeach()
 
-
-PROJECT_INIT(${additional_temp_sources} ${shader_location} ${compiled_libs})
+set(files_for_compile main.cpp)
+ADD_EXECUTABLE(my_solution ${files_for_compile})
+target_link_libraries(my_solution SHADER RENDERER  -lGLEW -lGL -lGLU -lglut -lpthread -lm)
