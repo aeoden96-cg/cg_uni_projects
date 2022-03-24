@@ -30,7 +30,7 @@ for file in os.listdir(directory):
 
             with open(f'{lecture_name}/{example_name}/CMakeLists.txt', 'w') as f:
                 f.write('cmake_minimum_required(VERSION 3.21)\n')
-                f.write('project(my_solution)\n')
+                f.write('project(sol_'+example_name+')\n')
                 f.write('set(CMAKE_CXX_STANDARD 17)\n')
 
                 f.write('add_subdirectory(../../opengl_libs ${CMAKE_CURRENT_BINARY_DIR}/opengl_libs)\n')
@@ -47,6 +47,6 @@ for file in os.listdir(directory):
                     f.write(f'set(files_for_compile main.cpp {hpp_exists})\n')
                 else:
                     f.write('set(files_for_compile main.cpp)\n')
-                f.write('ADD_EXECUTABLE(my_solution ${files_for_compile})\n')
-                f.write('target_link_libraries(my_solution SHADER RENDERER  -lGLEW -lGL -lGLU -lglut -lpthread -lm)')
+                f.write('ADD_EXECUTABLE(sol_' +example_name +' ${files_for_compile})\n')
+                f.write('target_link_libraries(sol_'+example_name+' SHADER  -lGLEW -lGL -lGLU -lglut -lpthread -lm)')
 

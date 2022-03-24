@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(my_solution)
+project(sol_bezier_kruznica)
 set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(../../opengl_libs ${CMAKE_CURRENT_BINARY_DIR}/opengl_libs)
 set(SHADER_LIST 
@@ -16,5 +16,5 @@ foreach(shader ${SHADER_LIST})
 endforeach()
 
 set(files_for_compile main.cpp)
-ADD_EXECUTABLE(my_solution ${files_for_compile})
-target_link_libraries(my_solution SHADER RENDERER  -lGLEW -lGL -lGLU -lglut -lpthread -lm)
+ADD_EXECUTABLE(sol_bezier_kruznica ${files_for_compile})
+target_link_libraries(sol_bezier_kruznica SHADER  -lGLEW -lGL -lGLU -lglut -lpthread -lm)
