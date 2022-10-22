@@ -8,24 +8,27 @@ Shader class is modified version of a class from
 * [LearnOpenGL](https://learnopengl.com/)  ```CC BY-NC 4.0```
 
 
-Requirements:
+## Requirements:
 
 1. Cmake latest version
 2. OpenGL version > 4
 3. CLion IDE or VS Code (+ VS Code CMake addon)
 ```To use Clion you need active faculty email for activation.```
 
-Usage:
 
-* just open a folder of a selected project in on of these
-two environments
-* additionaly, you can open root folder 
-and switch between projects in the tree view by selecting CMakeLists file
-of any project
+## Usage (VSCode)
 
+1. open project folder in VSCode (```code .``` in terminal)
+2. press ```Build```
+3. select compiler: ```GCC```
+4. select ```▷``` to run project
 
-Example(changing active project in Clion):
+## Usage (without VSCode)
 
-![alt text](change_proj_clion.gif)
-
+1. open project folder
+2. ```mkdir build```
+3. ```cd build```
+4. ```cmake ..```
+5. ```make```
+6. ```./project_name```
 
