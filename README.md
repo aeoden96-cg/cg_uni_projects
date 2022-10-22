@@ -19,8 +19,13 @@ Shader class is modified version of a class from
 
 > You need CMake addon for VSCode (it will suggest it to you to install it when you run the project)
 
+![screenshot1](screenshot1.png)
+
 1. open project folder in VSCode (```code .``` in terminal)
 2. press ```Build```
+
+![screenshot2](screenshot2.png)
+
 3. select compiler: ```GCC```
 4. select ```▷``` to run project
 
