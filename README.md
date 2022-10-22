@@ -33,3 +33,7 @@ Shader class is modified version of a class from
 5. ```make```
 6. ```./project_name```
 
+## Usage: clean all build files
+
+Just run ```./clean.sh```
+
