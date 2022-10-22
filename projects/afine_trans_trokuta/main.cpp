@@ -37,10 +37,8 @@
 
 // Nasa pomocna biblioteka za ucitavanje, prevodenje i linkanje programa shadera
 #include "Shader.h"
-#include "../../utils/render_lib/Renderer.hpp"
 
 Shader s;
-Renderer renderer;
 //*********************************************************************************
 //	Pokazivac na glavni prozor i pocetna velicina.
 //*********************************************************************************
