@@ -1,0 +1,6 @@
+[submodule "utils/render_lib"]
+	path = utils/render_lib
+	url = git@github.com:aeoden96-cg/render_lib.git
+[submodule "utils/shader_lib"]
+	path = utils/shader_lib
+	url = git@github.com:aeoden96-cg/shader_lib.git
