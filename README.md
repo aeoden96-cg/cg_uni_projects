@@ -13,6 +13,15 @@ Shader class is modified version of a class from
 1. Cmake latest version
 2. OpenGL version > 4
 3. VSCode
+4. linux package for git
+
+## Initialization
+1. clone repo
+2. in root folder run this lines:
+3. ```git submodule init```
+4. ```git submodule update```
+5. occasionally ```git pull``` to get new updates
+
 
 
 ## Usage (VSCode)
