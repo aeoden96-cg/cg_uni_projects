@@ -12,11 +12,12 @@ Shader class is modified version of a class from
 
 1. Cmake latest version
 2. OpenGL version > 4
-3. CLion IDE or VS Code (+ VS Code CMake addon)
-```To use Clion you need active faculty email for activation.```
+3. VSCode
 
 
 ## Usage (VSCode)
+
+> You need CMake addon for VSCode (it will suggest it to you to install it when you run the project)
 
 1. open project folder in VSCode (```code .``` in terminal)
 2. press ```Build```
